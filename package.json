@@ -14,5 +14,10 @@
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
     "cypress": "^15.9.0",
     "esbuild": "^0.27.2"
+  },
+  "cypress-cucumber-preprocessor": {
+    "stepDefinitions": [
+      "cypress/support/step_definitions/**/*.{js,ts}"
+    ]
   }
 }

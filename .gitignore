@@ -1,0 +1,46 @@
+# =========================
+# Node.js
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Cypress
+# =========================
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# IntelliJ / JetBrains
+# =========================
+.idea/
+*.iml
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Build / coverage
+# =========================
+dist/
+build/
+coverage/
+
+# =========================
+# Misc
+# =========================
+*.log

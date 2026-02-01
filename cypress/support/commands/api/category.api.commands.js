@@ -13,3 +13,17 @@ Cypress.Commands.add(
         });
     }
 );
+
+Cypress.Commands.add("createCategory", (name, token) => {
+  return cy.request({
+    method: "POST",
+    url: "/api/categories",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: {
+      name: name,
+    },
+    failOnStatusCode: false,
+  });
+});

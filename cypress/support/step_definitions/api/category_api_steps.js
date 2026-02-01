@@ -19,9 +19,17 @@ When(
     }
 );
 
+//Then("the response status code should be {int}", (statusCode) => {
+//    expect(apiResponse.status).to.eq(statusCode);
+//});
+
 Then("the response status code should be {int}", (statusCode) => {
-    expect(apiResponse.status).to.eq(statusCode);
+  cy.get("@apiResponse").then((response) => {
+    expect(response).to.exist;
+    expect(response.status).to.eq(statusCode);
+  });
 });
+
 
 Then("the response should contain a list of categories", () => {
     expect(apiResponse.body.content).to.be.an("array");

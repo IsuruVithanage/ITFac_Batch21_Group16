@@ -23,7 +23,7 @@ Feature: Admin Plant Management
     Then a delete confirmation alert should be displayed
 
   @TC_ADMIN_PLANT_09 @215104B
-  Scenario: Verify Admin-only actions are hidden for non-admin users
+  Scenario: Verify Add Plant button is hidden for non-admin users
     Given the user is logged in as "testUser"
     When the "user" navigates to the plant list page
     Then the Add Plant button should not be visible

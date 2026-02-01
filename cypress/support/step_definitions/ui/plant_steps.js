@@ -15,6 +15,10 @@ Then("the admin should be navigated to the Add Plant page", () => {
   cy.url().should("include", "/ui/plants/add");
 });
 
+Then("the Add Plant button should not be visible", () => {
+  cy.contains("a", "Add a Plant").should("not.exist");
+});
+
 
 // -----------------------------------
 // Edit plant

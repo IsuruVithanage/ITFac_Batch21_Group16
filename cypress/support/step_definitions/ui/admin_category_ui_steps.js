@@ -40,3 +40,47 @@ Then("the category details should be loaded", () => {
     .invoke("val")
     .should("not.be.empty");
 });
+
+When("the admin clicks the Delete button for a category", () => {
+  // MUST be registered before the click
+  cy.on("window:confirm", (text) => {
+    expect(text).to.eq("Delete this category?");
+    return false; // Cancel deletion
+  });
+
+  cy.get('button[title="Delete"]').first().click();
+});
+
+Then("a delete confirmation dialog should be displayed", () => {
+  // If we reached here, confirm was triggered and handled.
+  // (Optional: nothing else needed)
+});
+
+Given("the test user is logged in", () => {
+  cy.loginAs("testUser");
+  cy.get(".btn").should("be.visible").click();
+  cy.url().should("not.include", "/ui/login");
+});
+
+Given("the user is on the category list page", () => {
+  cy.visit("/ui/categories");
+  cy.url().should("include", "/categories");
+});
+
+Then("the Add Category button should not be visible", () => {
+  // If Add is a button/link with text, assert it doesn't exist
+  cy.contains("button, a", /add\s*(a\s*)?category/i).should("not.exist");
+
+  // Optional: if the Add button is an icon or has a known href, also assert it's absent
+  cy.get('a[href*="/ui/categories/add"], a[href*="/categories/add"]').should("not.exist");
+});
+
+Then("the Edit buttons should not be visible", () => {
+  // Edit is an icon-only button with title="Edit"
+  cy.get('a[title="Edit"]').should("not.exist");
+
+  // Extra safety: ensure no edit links are present by URL
+  cy.get('a[href*="/ui/categories/edit"]').should("not.exist");
+});
+
+

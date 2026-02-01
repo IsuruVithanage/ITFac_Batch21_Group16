@@ -51,3 +51,48 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add("getCategoryById", (categoryId, token) => {
+  return cy.request({
+    method: "GET",
+    url: `/api/categories/${categoryId}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    failOnStatusCode: false,
+  });
+});
+
+Cypress.Commands.add("getAllCategories", (token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/categories",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    failOnStatusCode: false,
+  });
+});
+
+Cypress.Commands.add("getAllSubCategories", (token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/categories/sub-categories",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    failOnStatusCode: false,
+  });
+});
+
+Cypress.Commands.add("getMainCategories", (token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/categories/main",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    failOnStatusCode: false,
+  });
+});
+
+

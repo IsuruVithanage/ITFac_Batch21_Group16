@@ -15,3 +15,9 @@ Feature: Admin Plant Management
     When the "admin" navigates to the plant list page
     And the admin clicks on the edit button for the first plant in the list
     Then the admin should be navigated to the Edit Plant page
+
+  @TC_ADMIN_PLANT_08 @215104B
+  Scenario: Verify delete confirmation alert opens on delete button click
+    When the "admin" navigates to the plant list page
+    And the admin clicks on the delete button for the first plant in the list
+    Then a delete confirmation alert should be displayed

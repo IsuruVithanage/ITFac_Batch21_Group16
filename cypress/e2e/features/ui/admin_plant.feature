@@ -27,3 +27,9 @@ Feature: Admin Plant Management
     Given the user is logged in as "testUser"
     When the "user" navigates to the plant list page
     Then the Add Plant button should not be visible
+
+  @TC_ADMIN_PLANT_10 @215104B
+  Scenario: Verify Edit Plant button is hidden for non-admin users
+    Given the user is logged in as "testUser"
+    When the "user" navigates to the plant list page
+    Then the Edit Plant button should not be visible

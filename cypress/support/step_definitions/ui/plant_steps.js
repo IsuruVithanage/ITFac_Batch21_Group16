@@ -35,6 +35,10 @@ Then("the admin should be navigated to the Edit Plant page", () => {
   cy.url().should("include", "/ui/plants/edit/");
 });
 
+Then("the Edit Plant button should not be visible", () => {
+  cy.get("a[title='Edit']").should("not.exist");
+});
+
 // -----------------------------------
 // Delete plant
 // -----------------------------------

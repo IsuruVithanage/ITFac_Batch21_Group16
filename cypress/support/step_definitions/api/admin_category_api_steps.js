@@ -79,3 +79,41 @@ Then("the response should indicate the category name is too long", () => {
   });
 });
 
+let parentCategory = {};
+
+Given('a parent category named {string} exists', (parentName) => {
+  // fixed parent id = 1 as per your request body
+  parentCategory = { id: 1, name: parentName, parentName: "-" };
+});
+
+When(
+  'the admin creates a sub-category with name {string} under that parent category',
+  (subName) => {
+    return cy
+      .createSubCategory(2, subName, parentCategory.id, parentCategory.name, token)
+      .then((response) => {
+        cy.wrap(response).as("apiResponse");
+      });
+  }
+);
+
+Then(
+  "the sub-category should be created with name {string} linked to the parent",
+  (subName) => {
+    cy.get("@apiResponse").then((response) => {
+      expect(response.status).to.eq(201);
+
+      // Response only contains id, name, subCategories (no parent info)
+      expect(response.body).to.have.property("id");
+      expect(response.body.name).to.eq(subName);
+
+      // subCategories is null in your response
+      expect(response.body).to.have.property("subCategories");
+      expect(response.body.subCategories).to.eq(null);
+    });
+  }
+);
+
+
+
+

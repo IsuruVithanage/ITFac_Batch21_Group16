@@ -28,3 +28,11 @@ Feature: Admin Category API
     When the admin creates a category with name "GreenVegetables"
     Then the response status code should be 400
     And the response should indicate the category name is too long
+
+  @TC_ADMIN_CAT_14
+  Scenario: Admin can create a sub-category linked to a parent category
+    Given the admin is authenticated via API
+    And a parent category named "Fruits" exists
+    When the admin creates a sub-category with name "Apple" under that parent category
+    Then the response status code should be 201
+    And the sub-category should be created with name "Apple" linked to the parent

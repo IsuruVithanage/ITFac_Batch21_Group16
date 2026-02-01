@@ -27,3 +27,27 @@ Cypress.Commands.add("createCategory", (name, token) => {
     failOnStatusCode: false,
   });
 });
+
+Cypress.Commands.add(
+  "createSubCategory",
+  (id, name, parentId, parentName, token) => {
+    return cy.request({
+      method: "POST",
+      url: "/api/categories",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: {
+        id: id,
+        name: name,
+        parent: {
+          id: parentId,
+          name: parentName,
+          parentName: "-",
+        },
+      },
+      failOnStatusCode: false,
+    });
+  }
+);
+

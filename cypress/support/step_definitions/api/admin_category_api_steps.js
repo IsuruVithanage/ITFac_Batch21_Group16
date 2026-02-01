@@ -41,3 +41,41 @@ Then("the response should indicate the category name already exists", () => {
     expect(bodyText).to.match(/exist|duplicate|already/);
   });
 });
+
+Then("the response should indicate the category name is too short", () => {
+  cy.get("@apiResponse").then((response) => {
+    expect(response.status).to.eq(400);
+
+    // Assert structured fields (best practice)
+    expect(response.body).to.have.property("message");
+    expect(String(response.body.message).toLowerCase()).to.include("validation");
+
+    expect(response.body).to.have.property("details");
+    expect(response.body.details).to.have.property("name");
+
+    const nameError = String(response.body.details.name).toLowerCase();
+
+    // Matches: "Category name must be between 3 and 10 characters"
+    expect(nameError).to.match(/between\s*3\s*and\s*10/);
+    expect(nameError).to.include("character");
+  });
+});
+
+Then("the response should indicate the category name is too long", () => {
+  cy.get("@apiResponse").then((response) => {
+    expect(response.status).to.eq(400);
+
+    expect(response.body).to.have.property("message");
+    expect(String(response.body.message).toLowerCase()).to.include("validation");
+
+    expect(response.body).to.have.property("details");
+    expect(response.body.details).to.have.property("name");
+
+    const nameError = String(response.body.details.name).toLowerCase();
+
+    // Same rule, opposite boundary
+    expect(nameError).to.match(/between\s*3\s*and\s*10/);
+    expect(nameError).to.include("character");
+  });
+});
+

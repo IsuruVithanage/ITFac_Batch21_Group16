@@ -13,11 +13,9 @@ Given("the test user is logged in", () => {
 });
 
 Given("the admin is on the category list page", () => {
-  cy.visit("/ui/categories");
-  cy.url().should("include", "/categories");
+  cy.goToCategoryList();
 });
 
 Given("the user is on the category list page", () => {
-  cy.visit("/ui/categories");
-  cy.url().should("include", "/categories");
+  cy.goToCategoryList();
 });

@@ -14,3 +14,8 @@ Feature: User Plant UI
   Scenario: Search plants by category
     When the user filters plants by category "Apple"
     Then only plants belonging to category "Apple" should be displayed
+
+  @TC_USER_PLANT_08 @215104B
+  Scenario: Display no records message
+    When the user searches for a plant with name "NonExistentPlant123"
+    Then the message "No plants found" should be displayed in the plant list

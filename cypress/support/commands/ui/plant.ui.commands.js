@@ -41,3 +41,14 @@ Cypress.Commands.add("validatePlantCategorySearchResult", (categoryName) => {
       expect(actualCategory).to.eq(categoryName);
     });
 });
+
+Cypress.Commands.add("assertNoPlantFound", () => {
+  // Verify the specific message exists and is visible
+  cy.get("table tbody")
+    .contains("td", "No plants found")
+    .should("be.visible")
+    .and("have.attr", "colspan", "5");
+
+  // Verify that ONLY this empty row exists (length should be 1)
+  cy.get("table tbody tr").should("have.length", 1);
+});

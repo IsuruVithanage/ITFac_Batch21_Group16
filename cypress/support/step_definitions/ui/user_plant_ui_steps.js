@@ -19,3 +19,7 @@ When("the user filters plants by category {string}", (categoryName) => {
 Then("only plants belonging to category {string} should be displayed", (categoryName) => {
   cy.validatePlantCategorySearchResult(categoryName);
 });
+
+Then("the message {string} should be displayed in the plant list", (message) => {
+  cy.assertNoPlantFound().should("contain.text", message);
+});

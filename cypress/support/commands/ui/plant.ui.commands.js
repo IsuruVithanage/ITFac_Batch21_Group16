@@ -53,3 +53,24 @@ Cypress.Commands.add("assertSearchFormReset", () => {
   cy.get('select[name="categoryId"]').should("have.value", "");
   cy.location("search").should("be.empty");   // No query parameters
 });
+
+Cypress.Commands.add("clickPlantNameSortHeader", () => {
+  cy.get('thead a[href*="sortField=name"]')
+    .should("be.visible")
+    .first()
+    .click();
+});
+
+Cypress.Commands.add("validatePlantListSortedByNameDesc", () => {
+  cy.getNonEmptyPlantTableRows()
+    .find("td:nth-child(1)") // 1st Column is Name
+    .then(($cells) => {
+      return Cypress._.map($cells, (cell) => cell.innerText.trim());
+    })
+    .then((names) => {
+      // Create a copy and sort it DESCENDING
+      const sortedNames = [...names].sort((a, b) => b.localeCompare(a));
+      // Validate the UI list matches the sorted list
+      expect(names).to.deep.equal(sortedNames);
+    });
+});

@@ -42,3 +42,10 @@ Then("the search filters should be cleared", () => {
   cy.assertSearchFormReset();
 });
 
+When("the user clicks the sort by name option", () => {
+  cy.clickPlantNameSortHeader();
+});
+
+Then("the plant list should be sorted by name in descending order", () => {
+  cy.validatePlantListSortedByNameDesc();
+});

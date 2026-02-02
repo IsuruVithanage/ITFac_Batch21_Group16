@@ -26,3 +26,8 @@ Feature: User Plant UI
     And the user selects category "Apple"
     And the user clicks the Reset button
     Then the search filters should be cleared
+
+  @TC_USER_PLANT_10 @215104B
+  Scenario: Sort plants by name
+    When the user clicks the sort by name option
+    Then the plant list should be sorted by name in descending order

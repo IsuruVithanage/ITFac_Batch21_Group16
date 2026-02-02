@@ -69,4 +69,35 @@ Then('only sub-categories for parent {string} should be displayed', (parentName)
   });
 });
 
+When("the user clicks the Name column header to sort", () => {
+  // Capture names before sorting
+  cy.get("table tbody tr td:nth-child(2)")
+    .then(($cells) => {
+      const names = [...$cells].map((el) => el.innerText.trim());
+      cy.wrap(names).as("namesBeforeSort");
+    });
+
+  // Click Name header sorting link (reliable)
+  cy.get('thead a[href*="sortField=name"]').first().click();
+});
+
+
+Then("the category list should be sorted alphabetically by name", () => {
+  cy.get("table tbody tr td:nth-child(2)")
+    .should("have.length.greaterThan", 1)
+    .then(($cells) => {
+      const namesAfter = [...$cells].map((el) => el.innerText.trim());
+
+      const ascSorted = [...namesAfter].sort((a, b) => a.localeCompare(b));
+      const descSorted = [...ascSorted].reverse();
+
+      // Should match either ASC or DESC
+      expect(
+        JSON.stringify(namesAfter) === JSON.stringify(ascSorted) ||
+          JSON.stringify(namesAfter) === JSON.stringify(descSorted),
+        `Expected sorted order, got: ${namesAfter.join(", ")}`
+      ).to.eq(true);
+    });
+});
+
 

@@ -22,5 +22,13 @@ Feature: User Category UI
       When the user filters by parent category "Fruits"
       Then only sub-categories for parent "Fruits" should be displayed
 
+    @TC_USER_CAT_19
+    Scenario: Test user sorts categories by name
+      Given the test user is logged in
+      And the user is on the category list page
+      When the user clicks the Name column header to sort
+      Then the category list should be sorted alphabetically by name
+
+
 
 

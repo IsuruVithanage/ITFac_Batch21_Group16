@@ -19,3 +19,10 @@ Feature: User Plant UI
   Scenario: Display no records message
     When the user searches for a plant with name "NonExistentPlant123"
     Then the message "No plants found" should be displayed in the plant list
+
+  @TC_USER_PLANT_09 @215104B
+  Scenario: Reset search form
+    When the user enters "Rose" in the search field
+    And the user selects category "Apple"
+    And the user clicks the Reset button
+    Then the search filters should be cleared

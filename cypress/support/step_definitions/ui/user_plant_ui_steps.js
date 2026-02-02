@@ -5,7 +5,8 @@ Given("the user is on the plant list page", () => {
 });
 
 When("the user searches for a plant with name {string}", (plantName) => {
-  cy.searchPlantByName(plantName);
+  cy.typePlantSearchTerm(plantName);
+  cy.clickOn("Search");
 });
 
 Then("only plants matching {string} should be displayed in the list", (plantName) => {
@@ -13,7 +14,8 @@ Then("only plants matching {string} should be displayed in the list", (plantName
 });
 
 When("the user filters plants by category {string}", (categoryName) => {
-  cy.filterPlantsByCategory(categoryName);
+  cy.selectPlantCategory(categoryName);
+  cy.clickOn("Search");
 });
 
 Then("only plants belonging to category {string} should be displayed", (categoryName) => {
@@ -23,3 +25,20 @@ Then("only plants belonging to category {string} should be displayed", (category
 Then("the message {string} should be displayed in the plant list", (message) => {
   cy.assertNoPlantFound().should("contain.text", message);
 });
+
+When("the user enters {string} in the search field", (name) => {
+  cy.typePlantSearchTerm(name);
+});
+
+When("the user selects category {string}", (categoryName) => {
+  cy.selectPlantCategory(categoryName);
+});
+
+When("the user clicks the Reset button", () => {
+  cy.clickOn("Reset");
+});
+
+Then("the search filters should be cleared", () => {
+  cy.assertSearchFormReset();
+});
+

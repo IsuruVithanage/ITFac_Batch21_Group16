@@ -11,9 +11,12 @@ Cypress.Commands.add("clickOnTheButtonOfFirstPlantItem", (selector) => {
     .click();
 });
 
-Cypress.Commands.add("searchPlantByName", (name) => {
+Cypress.Commands.add("typePlantSearchTerm", (name) => {
   cy.get('input[name="name"]').should("be.visible").clear().type(name);
-  cy.clickOn("Search");
+});
+
+Cypress.Commands.add("selectPlantCategory", (categoryName) => {
+  cy.get('select[name="categoryId"]').should("be.visible").select(categoryName);
 });
 
 Cypress.Commands.add("validatePlantNameSearchResult", (searchName) => {
@@ -23,14 +26,6 @@ Cypress.Commands.add("validatePlantNameSearchResult", (searchName) => {
       const actualName = $el.text().trim().toLowerCase();
       expect(actualName).to.include(searchName.toLowerCase());
     });
-});
-
-Cypress.Commands.add("filterPlantsByCategory", (categoryName) => {
-  cy.get('select[name="categoryId"]')
-    .should("be.visible")
-    .select(categoryName);
-
-  cy.clickOn("Search");
 });
 
 Cypress.Commands.add("validatePlantCategorySearchResult", (categoryName) => {
@@ -51,4 +46,10 @@ Cypress.Commands.add("assertNoPlantFound", () => {
 
   // Verify that ONLY this empty row exists (length should be 1)
   cy.get("table tbody tr").should("have.length", 1);
+});
+
+Cypress.Commands.add("assertSearchFormReset", () => {
+  cy.get('input[name="name"]').should("have.value", "");
+  cy.get('select[name="categoryId"]').should("have.value", "");
+  cy.location("search").should("be.empty");   // No query parameters
 });

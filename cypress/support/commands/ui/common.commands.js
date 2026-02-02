@@ -1,14 +1,14 @@
-Cypress.Commands.add("loginAs", (userType) => {
+Cypress.Commands.add("loginAs", (role) => {
     cy.fixture("users").then((users) => {
         cy.visit("/ui/login");
 
         cy.get('input[name="username"]')
             .clear()
-            .type(users[userType].username);
+            .type(users[role].username);
 
         cy.get('input[name="password"]')
             .clear()
-            .type(users[userType].password);
+            .type(users[role].password);
 
         cy.get('button, input[type="submit"]')
             .contains("Login")

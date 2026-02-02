@@ -100,4 +100,27 @@ Then("the category list should be sorted alphabetically by name", () => {
     });
 });
 
+When("the user searches for a non-existent category name", () => {
+  // Use a value that will never exist
+  const randomName = `NON_EXIST_${Date.now()}`;
+
+  cy.get('input[name="name"]')
+    .should("be.visible")
+    .clear()
+    .type(randomName);
+
+  cy.contains('button[type="submit"]', /^search$/i).click();
+});
+
+Then('the message {string} should be displayed', (message) => {
+  // Assert empty-state row in the table
+  cy.get("table tbody")
+    .contains("td", message)
+    .should("be.visible")
+    .and("have.attr", "colspan", "4");
+
+  // Ensure there are no real data rows (only the empty-state row)
+  cy.get("table tbody tr").should("have.length", 1);
+});
+
 

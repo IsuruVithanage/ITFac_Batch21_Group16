@@ -29,6 +29,13 @@ Feature: User Category UI
       When the user clicks the Name column header to sort
       Then the category list should be sorted alphabetically by name
 
+    @TC_USER_CAT_20
+    Scenario: Test user sees no category found message when search returns no results
+      Given the test user is logged in
+      And the user is on the category list page
+      When the user searches for a non-existent category name
+      Then the message "No category found" should be displayed
+
 
 
 

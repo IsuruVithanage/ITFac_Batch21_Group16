@@ -1,15 +1,8 @@
 import { Given } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("the admin user is logged in", () => {
-  cy.loginAs("admin");
-  cy.get(".btn").should("be.visible").click();
-  cy.url().should("not.include", "/ui/login");
-});
-
-Given("the test user is logged in", () => {
-  cy.loginAs("testUser");
-  cy.get(".btn").should("be.visible").click();
-  cy.url().should("not.include", "/ui/login");
+Given("the user is logged in as {string}", (role) => {
+  cy.loginAs(role);
+  cy.currentUrlShouldIncludes("/ui/dashboard");
 });
 
 Given("the admin is on the category list page", () => {

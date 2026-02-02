@@ -1,12 +1,9 @@
-import {When, Then, Given} from "@badeball/cypress-cucumber-preprocessor";
+import { When, Then, Given } from "@badeball/cypress-cucumber-preprocessor";
 
 Given("the {string} is on the plant list page", (_role) => {
   cy.goToPage("/ui/plants");
 });
 
-// -----------------------------------
-// Add plant
-// -----------------------------------
 When("the admin clicks on the Add Plant button", () => {
   cy.clickOn("Add a Plant")
 });
@@ -19,10 +16,6 @@ Then("the Add Plant button should not be visible", () => {
   cy.contains("a", "Add a Plant").should("not.exist");
 });
 
-
-// -----------------------------------
-// Edit plant
-// -----------------------------------
 When("the admin clicks on the edit button for the first plant in the list", () => {
   cy.clickOnTheButtonOfFirstPlantItem("a[title='Edit']");
 });
@@ -35,9 +28,6 @@ Then("the Edit Plant button should not be visible", () => {
   cy.get("a[title='Edit']").should("not.exist");
 });
 
-// -----------------------------------
-// Delete plant
-// -----------------------------------
 When("the admin clicks on the delete button for the first plant in the list", () => {
   // 1. Set up a stub that returns FALSE (Simulates clicking "Cancel")
   cy.window().then((win) => {

@@ -48,3 +48,25 @@ Then('only categories matching {string} should be displayed', (term) => {
   });
 });
 
+When('the user filters by parent category {string}', (parentName) => {
+  // Select parent by visible text
+  cy.get('select[name="parentId"]').should("be.visible").select(parentName);
+
+  // Click Search
+  cy.contains('button[type="submit"]', /^search$/i).click();
+});
+
+Then('only sub-categories for parent {string} should be displayed', (parentName) => {
+  cy.get("table tbody tr").should("have.length.greaterThan", 0);
+
+  // Each row should show the selected parent somewhere (commonly in Parent column)
+  cy.get("table tbody tr").each(($row) => {
+    cy.wrap($row)
+      .invoke("text")
+      .then((txt) => {
+        expect(txt.toLowerCase()).to.include(parentName.toLowerCase());
+      });
+  });
+});
+
+

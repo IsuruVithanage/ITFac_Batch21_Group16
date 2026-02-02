@@ -15,4 +15,12 @@ Feature: User Category UI
       When the user searches for category name "Fruits"
       Then only categories matching "Fruits" should be displayed
 
+    @TC_USER_CAT_18
+    Scenario: Test user filters sub-categories by parent category
+      Given the test user is logged in
+      And the user is on the category list page
+      When the user filters by parent category "Fruits"
+      Then only sub-categories for parent "Fruits" should be displayed
+
+
 

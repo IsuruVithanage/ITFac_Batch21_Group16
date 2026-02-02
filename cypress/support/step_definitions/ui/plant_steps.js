@@ -1,18 +1,18 @@
-import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import {When, Then, Given} from "@badeball/cypress-cucumber-preprocessor";
 
-When("the {string} navigates to the plant list page", (_role) => {
-  cy.visit("/ui/plants");
+Given("the {string} is on the plant list page", (_role) => {
+  cy.goToPage("/ui/plants");
 });
 
 // -----------------------------------
 // Add plant
 // -----------------------------------
 When("the admin clicks on the Add Plant button", () => {
-  cy.contains("a", "Add a Plant").should("be.visible").click();
+  cy.clickOn("Add a Plant")
 });
 
-Then("the admin should be navigated to the Add Plant page", () => {
-  cy.url().should("include", "/ui/plants/add");
+Then("the admin should be redirected to the Add Plant page", () => {
+  cy.currentUrlShouldIncludes("/ui/plants/add")
 });
 
 Then("the Add Plant button should not be visible", () => {
@@ -24,15 +24,11 @@ Then("the Add Plant button should not be visible", () => {
 // Edit plant
 // -----------------------------------
 When("the admin clicks on the edit button for the first plant in the list", () => {
-  cy.get("tbody tr")
-    .should("have.length.gt", 0, "Plant table is empty! Cannot click Edit.")
-    .first()
-    .find("a[title='Edit']")
-    .click();
+  cy.clickOnTheButtonOfFirstPlantItem("a[title='Edit']");
 });
 
-Then("the admin should be navigated to the Edit Plant page", () => {
-  cy.url().should("include", "/ui/plants/edit/");
+Then("the admin should be redirected to the Edit Plant page", () => {
+  cy.currentUrlShouldIncludes("/ui/plants/edit");
 });
 
 Then("the Edit Plant button should not be visible", () => {
@@ -49,11 +45,7 @@ When("the admin clicks on the delete button for the first plant in the list", ()
   });
 
   // 2. Click the delete button
-  cy.get("tbody tr")
-    .should("have.length.gt", 0, "Plant table is empty! Cannot click Delete.")
-    .first()
-    .find("button[title='Delete']")
-    .click();
+  cy.clickOnTheButtonOfFirstPlantItem("button[title='Delete']");
 });
 
 Then("a delete confirmation alert should be displayed", () => {

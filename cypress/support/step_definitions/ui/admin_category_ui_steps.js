@@ -1,20 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("the admin user is logged in", () => {
-  cy.loginAs("admin");
-
-  // Option B: explicit login click
-  cy.get(".btn").should("be.visible").click();
-
-  // Optional sanity: ensure we left login page
-  cy.url().should("not.include", "/ui/login");
-});
-
-Given("the admin is on the category list page", () => {
-  cy.visit("/ui/categories");
-  cy.url().should("include", "/categories");
-});
-
 When("the admin clicks the Add Category button", () => {
   // More flexible: matches "Add Category" or "Add a Category"
   cy.contains("button, a", /add\s*(a\s*)?category/i).click();
@@ -54,17 +39,6 @@ When("the admin clicks the Delete button for a category", () => {
 Then("a delete confirmation dialog should be displayed", () => {
   // If we reached here, confirm was triggered and handled.
   // (Optional: nothing else needed)
-});
-
-Given("the test user is logged in", () => {
-  cy.loginAs("testUser");
-  cy.get(".btn").should("be.visible").click();
-  cy.url().should("not.include", "/ui/login");
-});
-
-Given("the user is on the category list page", () => {
-  cy.visit("/ui/categories");
-  cy.url().should("include", "/categories");
 });
 
 Then("the Add Category button should not be visible", () => {

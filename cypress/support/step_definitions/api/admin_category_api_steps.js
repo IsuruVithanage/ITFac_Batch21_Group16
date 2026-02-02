@@ -114,6 +114,56 @@ Then(
   }
 );
 
+Given("at least {int} categories exist in the system", (minCount) => {
+  let adminToken;
+
+  return cy.apiLoginAs("admin").then((token) => {
+    adminToken = token;
+
+    return cy.getAllCategories(adminToken).then((response) => {
+      expect(response.status).to.eq(200);
+
+      const categories = response.body;
+      const existingCount = categories.length;
+
+      if (existingCount >= minCount) {
+        cy.log(`Already have ${existingCount} categories. No seeding needed.`);
+        return;
+      }
+
+      // Find max CAT### already in the system to avoid duplicates
+      const catNums = categories
+        .map((c) => String(c.name || ""))
+        .map((name) => {
+          const m = name.match(/^CAT(\d{3})$/);
+          return m ? parseInt(m[1], 10) : null;
+        })
+        .filter((n) => n !== null);
+
+      const start = catNums.length ? Math.max(...catNums) + 1 : 1;
+      const toCreate = minCount - existingCount;
+
+      cy.log(`Seeding ${toCreate} categories for pagination test (starting CAT${String(start).padStart(3, "0")})`);
+
+      // Chain creations to keep Cypress command queue clean
+      let chain = cy.wrap(null);
+
+      for (let i = 0; i < toCreate; i++) {
+        const categoryName = `CAT${String(start + i).padStart(3, "0")}`; // CAT001..CAT999
+
+        chain = chain.then(() =>
+          cy.createCategory(categoryName, adminToken)
+            .its("status")
+            .should("eq", 201)
+        );
+      }
+
+      return chain;
+    });
+  });
+});
+
+
 
 
 

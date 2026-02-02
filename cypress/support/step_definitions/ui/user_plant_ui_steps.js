@@ -11,3 +11,11 @@ When("the user searches for a plant with name {string}", (plantName) => {
 Then("only plants matching {string} should be displayed in the list", (plantName) => {
   cy.validatePlantNameSearchResult(plantName);
 });
+
+When("the user filters plants by category {string}", (categoryName) => {
+  cy.filterPlantsByCategory(categoryName);
+});
+
+Then("only plants belonging to category {string} should be displayed", (categoryName) => {
+  cy.validatePlantCategorySearchResult(categoryName);
+});

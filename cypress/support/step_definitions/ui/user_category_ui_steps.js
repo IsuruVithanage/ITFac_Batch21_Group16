@@ -25,3 +25,26 @@ Then("the next set of categories should be loaded", () => {
       });
   });
 });
+
+When('the user searches for category name {string}', (term) => {
+  // Type into search box
+  cy.get('input[name="name"]').should("be.visible").clear().type(term);
+
+  // Click Search button
+  cy.contains('button[type="submit"]', /^search$/i).click();
+});
+
+Then('only categories matching {string} should be displayed', (term) => {
+  // Assert at least one row exists and includes the term
+  cy.get("table tbody tr").should("have.length.greaterThan", 0);
+
+  // Every displayed row should match the search term (case-insensitive)
+  cy.get("table tbody tr").each(($row) => {
+    cy.wrap($row)
+      .invoke("text")
+      .then((txt) => {
+        expect(txt.toLowerCase()).to.include(term.toLowerCase());
+      });
+  });
+});
+

@@ -8,3 +8,11 @@ Feature: User Category UI
       When the user navigates to the next page using pagination
       Then the next set of categories should be loaded
 
+    @TC_USER_CAT_17
+    Scenario: Test user searches categories by name
+      Given the test user is logged in
+      And the user is on the category list page
+      When the user searches for category name "Fruits"
+      Then only categories matching "Fruits" should be displayed
+
+

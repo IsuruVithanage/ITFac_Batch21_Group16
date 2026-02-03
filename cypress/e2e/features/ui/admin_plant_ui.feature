@@ -27,25 +27,25 @@ Feature: Admin Plant UI
   @TC_ADMIN_PLANT_09 @215104B
   Scenario: Verify Add Plant button is hidden for non-admin users
     Given the user is logged in as "testUser"
-    And the "user" is on the plant list page
+    When the "user" navigates to the plant list page
     Then the Add Plant button should not be visible
 
   @TC_ADMIN_PLANT_10 @215104B
   Scenario: Verify Edit Plant button is hidden for non-admin users
     Given the user is logged in as "testUser"
-    And the "user" is on the plant list page
+    When the "user" navigates to the plant list page
     Then the Edit Plant button should not be visible
 
   @TC_ADMIN_PLANT_16 @215004T
   Scenario: Verify delete button is hidden for test user
     Given the user is logged in as "testUser"
-    And the "testUser" is on the plant list page
+    When the "user" navigates to the plant list page
     Then the delete button should not be visible for any plant item
 
   @TC_ADMIN_PLANT_17 @215004T
   Scenario: Verify low stock indicator appears when quantity is low
     Given the user is logged in as "admin"
-    And the "admin" is on the plant list page
+    When the "admin" navigates to the plant list page
     Then the low stock indicator should be displayed for plants with quantity less than 5
 
   @TC_ADMIN_PLANT_18 @215004T

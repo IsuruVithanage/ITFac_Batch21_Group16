@@ -4,6 +4,10 @@ Given("the {string} is on the plant list page", (_role) => {
   cy.goToPage("/ui/plants");
 });
 
+When("the {string} navigates to the plant list page", (_role) => {
+  cy.goToPage("/ui/plants");
+});
+
 When("the admin clicks on the Add Plant button", () => {
   cy.clickOn("Add a Plant")
 });

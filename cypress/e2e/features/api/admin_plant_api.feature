@@ -1,3 +1,4 @@
+@admin @api @plant
 Feature: Admin Plant API
 
   Background:

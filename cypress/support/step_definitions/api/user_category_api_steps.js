@@ -1,15 +1,11 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
-let adminToken;
-let userToken;
 let categoryIdByName = {};
 
 Given('a category named {string} exists in the system', (categoryName) => {
   // Use admin token to ensure access to listing
-  return cy.apiLoginAs("admin").then((t) => {
-    adminToken = t;
-
-    return cy.getAllCategories(adminToken).then((response) => {
+  return cy.apiLoginAs("admin").then((token) => {
+    return cy.getAllCategories(token).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.be.an("array");
 
@@ -28,18 +24,15 @@ Given('a category named {string} exists in the system', (categoryName) => {
   });
 });
 
-Given("the test user is authenticated via API", () => {
-  return cy.apiLoginAs("testUser").then((t) => {
-    userToken = t;
-  });
-});
-
 When('the user retrieves the category by the valid id of {string}', (categoryName) => {
   const id = categoryIdByName[categoryName];
   expect(id, `No stored id for category "${categoryName}"`).to.exist;
 
-  return cy.getCategoryById(id, userToken).then((response) => {
-    cy.wrap(response).as("apiResponse");
+  // Retrieve the User Token (set in Background)
+  cy.get("@authToken").then((token) => {
+    cy.getCategoryById(id, token).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
   });
 });
 
@@ -58,8 +51,10 @@ Then('the category details should match name {string} and parentId null', (categ
 });
 
 When("the user retrieves a category by invalid id {int}", (invalidId) => {
-  return cy.getCategoryById(invalidId, userToken).then((response) => {
-    cy.wrap(response).as("apiResponse");
+  cy.get("@authToken").then((token) => {
+    cy.getCategoryById(invalidId, token).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
   });
 });
 
@@ -75,8 +70,10 @@ Then("the response should indicate the category does not exist", () => {
 });
 
 When("the user retrieves all sub-categories", () => {
-  return cy.getAllSubCategories(userToken).then((response) => {
-    cy.wrap(response).as("apiResponse");
+  cy.get("@authToken").then((token) => {
+    cy.getAllSubCategories(token).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
   });
 });
 
@@ -99,8 +96,10 @@ Then("the response should be a list of sub-categories", () => {
 });
 
 When("the user retrieves all main categories", () => {
-  return cy.getMainCategories(userToken).then((response) => {
-    cy.wrap(response).as("apiResponse");
+  cy.get("@authToken").then((token) => {
+    cy.getMainCategories(token).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
   });
 });
 
@@ -130,8 +129,10 @@ Then("the response should contain only main categories at top level", () => {
 });
 
 When("the user retrieves all categories", () => {
-  return cy.getAllCategories(userToken).then((response) => {
-    cy.wrap(response).as("apiResponse");
+  cy.get("@authToken").then((token) => {
+    cy.getAllCategories(token).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
   });
 });
 

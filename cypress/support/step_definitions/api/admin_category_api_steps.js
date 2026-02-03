@@ -1,23 +1,21 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
-let token;
-
-Given("the admin is authenticated via API", () => {
-  return cy.apiLoginAs("admin").then((authToken) => {
-    token = authToken;
-  });
-});
+let parentCategory = {};
 
 Given('a category named {string} already exists', (categoryName) => {
-  // Ensure precondition: try to create it; if it already exists that's okay.
-  return cy.createCategory(categoryName, token).then((response) => {
-    expect([201, 400, 409]).to.include(response.status);
+  cy.get("@authToken").then((token) => {
+    // Ensure precondition: try to create it; if it already exists that's okay.
+    return cy.createCategory(categoryName, token).then((response) => {
+      expect([201, 400, 409]).to.include(response.status);
+    });
   });
 });
 
 When("the admin creates a category with name {string}", (categoryName) => {
-  return cy.createCategory(categoryName, token).then((response) => {
-    cy.wrap(response).as("apiResponse");
+  cy.get("@authToken").then((token) => {
+    return cy.createCategory(categoryName, token).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
   });
 });
 
@@ -79,8 +77,6 @@ Then("the response should indicate the category name is too long", () => {
   });
 });
 
-let parentCategory = {};
-
 Given('a parent category named {string} exists', (parentName) => {
   // fixed parent id = 1 as per your request body
   parentCategory = { id: 1, name: parentName, parentName: "-" };
@@ -89,11 +85,13 @@ Given('a parent category named {string} exists', (parentName) => {
 When(
   'the admin creates a sub-category with name {string} under that parent category',
   (subName) => {
-    return cy
-      .createSubCategory(2, subName, parentCategory.id, parentCategory.name, token)
-      .then((response) => {
-        cy.wrap(response).as("apiResponse");
-      });
+    cy.get("@authToken").then((token) => {
+      return cy
+        .createSubCategory(2, subName, parentCategory.id, parentCategory.name, token)
+        .then((response) => {
+          cy.wrap(response).as("apiResponse");
+        });
+    });
   }
 );
 
@@ -162,8 +160,3 @@ Given("at least {int} categories exist in the system", (minCount) => {
     });
   });
 });
-
-
-
-
-

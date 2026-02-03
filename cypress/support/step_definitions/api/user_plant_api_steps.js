@@ -91,16 +91,6 @@ Then("the response should be a list of plants", () => {
   });
 });
 
-When("the user attempts to retrieve plants without an auth token", () => {
-  cy.request({
-    method: "GET",
-    url: "/api/plants",
-    failOnStatusCode: false // Allow 401 without failing the test immediately
-  }).then((response) => {
-    cy.wrap(response).as("apiResponse");
-  });
-});
-
 When("the user retrieves the plant summary", () => {
   cy.get("@authToken").then((token) => {
     cy.getPlantSummary(token).then((response) => {

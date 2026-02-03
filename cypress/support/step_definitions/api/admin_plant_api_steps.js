@@ -1,4 +1,4 @@
-import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, When } from "@badeball/cypress-cucumber-preprocessor";
 
 Given("a plant exists", () => {
   const targetPlantName = "TestPlant_1";
@@ -52,6 +52,22 @@ When("the admin updates the plant with quantity {int}", (invalidQuantity) => {
     };
 
     cy.updatePlant(plantId, updatePayload, token).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
+  });
+});
+
+When("the admin attempts to update a non-existent plant with ID {int}", (invalidId) => {
+  cy.get("@authToken").then((token) => {
+
+    const dummyPayload = {
+      name: "NonExistentPlant",
+      price: 100.0,
+      quantity: 10,
+      category: { id: 1 }
+    };
+
+    cy.updatePlant(invalidId, dummyPayload, token).then((response) => {
       cy.wrap(response).as("apiResponse");
     });
   });

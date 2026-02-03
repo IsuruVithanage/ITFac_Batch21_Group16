@@ -16,3 +16,9 @@ Feature: Admin Plant API
     When the admin updates the plant with quantity -5
     Then the response status code should be "400"
     And the response should indicate "Quantity cannot be negative"
+
+  @TC_ADMIN_PLANT_03 @215104B
+  Scenario: Verify system rejects edit request for a non-existent plant
+    When the admin attempts to update a non-existent plant with ID 999999
+    Then the response status code should be "404"
+    And the response should indicate "Plant not found"

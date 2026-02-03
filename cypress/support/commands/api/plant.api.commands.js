@@ -18,6 +18,15 @@ Cypress.Commands.add("updatePlant", (plantId, plantData, token) => {
   });
 });
 
+Cypress.Commands.add("deletePlant", (plantId, token) => {
+  return cy.request({
+    method: "DELETE",
+    url: `/api/plants/${plantId}`,
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
 Cypress.Commands.add("ensurePlantExistsWithName", (plantName) => {
   // Login as admin
   return cy.apiLoginAs("admin").then((token) => {

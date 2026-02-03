@@ -27,6 +27,34 @@ Cypress.Commands.add("deletePlant", (plantId, token) => {
   });
 });
 
+Cypress.Commands.add("getPlantsPaged", (page, size, token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/plants/paged",
+    qs: { page: page, size: size },
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
+Cypress.Commands.add("getAllPlants", (token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/plants", // The non-paged endpoint
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
+Cypress.Commands.add("getPlantSummary", (token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/plants/summary",
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
 Cypress.Commands.add("ensurePlantExistsWithName", (plantName) => {
   // Login as admin
   return cy.apiLoginAs("admin").then((token) => {

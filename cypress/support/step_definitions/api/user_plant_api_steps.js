@@ -101,3 +101,20 @@ When("the user attempts to retrieve plants without an auth token", () => {
   });
 });
 
+When("the user retrieves the plant summary", () => {
+  cy.get("@authToken").then((token) => {
+    cy.getPlantSummary(token).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
+  });
+});
+
+Then("the response should contain valid summary data", () => {
+  cy.get("@apiResponse").then((response) => {
+    const body = response.body;
+    expect(body).to.exist;
+    expect(body).to.be.an("object");
+    expect(body).to.have.property("totalPlants");
+    expect(body.totalPlants).to.be.a("number");
+  });
+});

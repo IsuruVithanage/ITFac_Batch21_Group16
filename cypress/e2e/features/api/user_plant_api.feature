@@ -23,3 +23,10 @@ Feature: User Plant API
   Scenario: Verify system rejects request when auth token is missing
     When the user attempts to retrieve plants without an auth token
     Then the response status code should be "401"
+
+  @TC_USER_PLANT_04 @215104B
+  Scenario: Verify user can retrieve plant summary when authenticated
+    Given at least 5 plants exist in the system
+    When the user retrieves the plant summary
+    Then the response status code should be "200"
+    And the response should contain valid summary data

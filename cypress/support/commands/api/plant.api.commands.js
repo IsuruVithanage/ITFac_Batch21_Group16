@@ -46,6 +46,15 @@ Cypress.Commands.add("getAllPlants", (token) => {
   });
 });
 
+Cypress.Commands.add("getPlantSummary", (token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/plants/summary",
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
 Cypress.Commands.add("ensurePlantExistsWithName", (plantName) => {
   // Login as admin
   return cy.apiLoginAs("admin").then((token) => {

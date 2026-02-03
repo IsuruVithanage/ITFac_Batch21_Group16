@@ -35,3 +35,24 @@ When("the admin updates the plant with price {int}", (invalidPrice) => {
     });
   });
 });
+
+When("the admin updates the plant with quantity {int}", (invalidQuantity) => {
+  let token, plantId, originalData;
+
+  // Fetch values linearly from aliases
+  cy.get("@authToken").then((t) => { token = t; });
+  cy.get("@createdPlantId").then((id) => { plantId = id; });
+  cy.get("@originalPlantData").then((data) => { originalData = data; });
+
+  // Execute update
+  cy.then(() => {
+    const updatePayload = {
+      ...originalData,
+      quantity: invalidQuantity
+    };
+
+    cy.updatePlant(plantId, updatePayload, token).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
+  });
+});

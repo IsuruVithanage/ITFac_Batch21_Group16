@@ -1,4 +1,11 @@
-Feature: Admin Category UI
+@admin @ui @category
+Feature: Admin Category Management
+
+  @TC_ADMIN_CAT_06 @215119B
+  Scenario: Verify delete button is disabled for test user in category list
+    Given the user is logged in as "testUser"
+    And the "testUser" is on the category list page
+    Then the Delete button should be disabled for categories
 
   @TC_ADMIN_CAT_15
   Scenario: Admin navigates to Add Category page

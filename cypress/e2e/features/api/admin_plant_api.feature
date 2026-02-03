@@ -1,4 +1,3 @@
-@admin @api @plant
 Feature: Admin Plant API
 
   Background:
@@ -35,3 +34,31 @@ Feature: Admin Plant API
   Scenario: Verify system handles delete request for a non-existent plant ID
     When the admin attempts to delete a non-existent plant with ID 999999
     Then the response status code should be "204"
+
+  @TC_ADMIN_PLANT_11 @215004T
+  Scenario: Add plant with all valid fields
+    When the admin creates a new plant with valid fields
+    Then the response status code should be "201"
+    And the plant should be successfully created
+
+  @TC_ADMIN_PLANT_12 @215004T
+  Scenario: Add plant name less than 3 characters
+    When the admin creates a new plant with name "Ab"
+    Then the response status code should be "400"
+
+  @TC_ADMIN_PLANT_13 @215004T
+  Scenario: Add plant name more than 25 characters
+    When the admin creates a new plant with name "ThisPlantNameIsDefinitelyTooLongToBeAccepted"
+    Then the response status code should be "400"
+
+  @TC_ADMIN_PLANT_14 @215004T
+  Scenario: Duplicate plant name in same category
+    Given a plant named "UniquePlant" already exists
+    When the admin creates another plant with name "UniquePlant" in the same category
+    Then the response status code should be "400"
+
+  @TC_ADMIN_PLANT_15 @215004T
+  Scenario: Duplicate plant name in different category
+    Given a plant named "GlobalPlant" already exists
+    When the admin creates a new plant with name "GlobalPlant" in a different category
+    Then the response status code should be "201"  

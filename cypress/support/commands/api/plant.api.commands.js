@@ -65,3 +65,28 @@ Cypress.Commands.add("ensurePlantExistsWithName", (plantName) => {
     });
   });
 });
+
+Cypress.Commands.add("createPlant", (plantData, token) => {
+  return cy.request({
+    method: "POST",
+    url: `/api/plants/category/${plantData.category.id}`,
+    headers: { Authorization: `Bearer ${token}` },
+    body: plantData,
+    failOnStatusCode: false // Critical: allows us to test 400/409 errors without Cypress crashing
+  });
+});
+
+Cypress.Commands.add("getFirstCategory", (token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/plants/paged",
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  }).then((res) => {
+    if (res.status === 200 && res.body.content.length > 0) {
+      return res.body.content[0].category;
+    }
+    // Fallback: Default category object if API fails
+    return { id: 1, name: "General" }; 
+  });
+});

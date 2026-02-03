@@ -37,6 +37,15 @@ Cypress.Commands.add("getPlantsPaged", (page, size, token) => {
   });
 });
 
+Cypress.Commands.add("getAllPlants", (token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/plants", // The non-paged endpoint
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
 Cypress.Commands.add("ensurePlantExistsWithName", (plantName) => {
   // Login as admin
   return cy.apiLoginAs("admin").then((token) => {

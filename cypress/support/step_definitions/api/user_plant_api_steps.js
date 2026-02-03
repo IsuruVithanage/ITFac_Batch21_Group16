@@ -70,3 +70,23 @@ Then("the response should contain {int} plant items", (expectedCount) => {
     expect(response.body.content).to.have.length(expectedCount);
   });
 });
+
+When("the user retrieves all plants", () => {
+  cy.get("@authToken").then((token) => {
+    cy.getAllPlants(token).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
+  });
+});
+
+Then("the response should be a list of plants", () => {
+  cy.get("@apiResponse").then((response) => {
+    expect(response.body).to.be.an("array");
+    expect(response.body.length).to.be.at.least(1);
+
+    const firstPlant = response.body[0];
+    expect(firstPlant).to.have.property("id");
+    expect(firstPlant).to.have.property("name");
+    expect(firstPlant).to.have.property("price");
+  });
+});

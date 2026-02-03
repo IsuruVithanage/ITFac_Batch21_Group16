@@ -1,5 +1,5 @@
 @admin @ui @plant
-Feature: Admin Plant Management
+Feature: Admin Plant UI
 
   @TC_ADMIN_PLANT_06 @215104B
   Scenario: Verify admin can navigate to Add Plant page

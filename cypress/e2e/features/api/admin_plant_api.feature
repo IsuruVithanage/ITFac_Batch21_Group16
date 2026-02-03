@@ -29,3 +29,8 @@ Feature: Admin Plant API
     And the "testUser" is authenticated via API
     When the user attempts to delete the plant
     Then the response status code should be "403"
+
+  @TC_ADMIN_PLANT_05 @215104B
+  Scenario: Verify system handles delete request for a non-existent plant ID
+    When the admin attempts to delete a non-existent plant with ID 999999
+    Then the response status code should be "204"

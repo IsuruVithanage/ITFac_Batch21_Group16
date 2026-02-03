@@ -85,3 +85,11 @@ When("the user attempts to delete the plant", () => {
     });
   });
 });
+
+When("the admin attempts to delete a non-existent plant with ID {int}", (invalidId) => {
+  cy.get("@authToken").then((token) => {
+    cy.deletePlant(invalidId, token).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
+  });
+});

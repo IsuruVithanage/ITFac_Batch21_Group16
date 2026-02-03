@@ -18,3 +18,8 @@ Feature: User Plant API
     When the user retrieves all plants
     Then the response status code should be "200"
     And the response should be a list of plants
+
+  @TC_USER_PLANT_03 @215104B
+  Scenario: Verify system rejects request when auth token is missing
+    When the user attempts to retrieve plants without an auth token
+    Then the response status code should be "401"

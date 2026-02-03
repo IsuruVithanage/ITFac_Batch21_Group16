@@ -90,3 +90,14 @@ Then("the response should be a list of plants", () => {
     expect(firstPlant).to.have.property("price");
   });
 });
+
+When("the user attempts to retrieve plants without an auth token", () => {
+  cy.request({
+    method: "GET",
+    url: "/api/plants",
+    failOnStatusCode: false // Allow 401 without failing the test immediately
+  }).then((response) => {
+    cy.wrap(response).as("apiResponse");
+  });
+});
+

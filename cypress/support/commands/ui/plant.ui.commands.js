@@ -15,8 +15,16 @@ Cypress.Commands.add("typePlantSearchTerm", (name) => {
   cy.get('input[name="name"]').should("be.visible").clear().type(name);
 });
 
-Cypress.Commands.add("selectPlantCategory", (categoryName) => {
-  cy.get('select[name="categoryId"]').should("be.visible").select(categoryName);
+Cypress.Commands.add("selectPlantCategoryFromFirstRow", () => {
+  return cy.getNonEmptyPlantTableRows()
+    .first()
+    .find("td")
+    .eq(1)
+    .then(($column) => {
+      const categoryName = $column.text().trim();
+      cy.get('select[name="categoryId"]').should("be.visible").select(categoryName);
+      return cy.wrap(categoryName);
+    });
 });
 
 Cypress.Commands.add("validatePlantNameSearchResult", (searchName) => {
@@ -111,16 +119,6 @@ Cypress.Commands.add("submitPlantForm", () => {
   // Looks for a button with type submit inside the form
   cy.clickOn("Save");
 });
-
-// Cypress.Commands.add("verifyFieldValidationError", (fieldName, errorMessage) => {
-//   // This assumes the error message appears near the input field
-//   // Adjust selector based on your actual UI (e.g., .invalid-feedback, .error-message)
-//   cy.get(`input[name="${fieldName}"], select[name="${fieldName}"]`)
-//     .parents(".form-group, div") // Traverse up to the container
-//     .find(".text-danger, .invalid-feedback") // Common error classes
-//     .should("be.visible")
-//     .and("contain.text", errorMessage);
-// });
 
 Cypress.Commands.add("verifyFieldValidationError", (fieldName, errorMessage) => {
   // 1. Get the specific input/select field

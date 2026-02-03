@@ -31,3 +31,5 @@ Feature: User Plant List Access
   Scenario: Sort plants by name
     When the user clicks the sort by name option
     Then the plant list should be sorted by name in descending order
+
+

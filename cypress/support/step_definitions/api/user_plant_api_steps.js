@@ -118,3 +118,13 @@ Then("the response should contain valid summary data", () => {
     expect(body.totalPlants).to.be.a("number");
   });
 });
+
+When("the user attempts to retrieve the plant summary without an auth token", () => {
+  cy.request({
+    method: "GET",
+    url: "/api/plants/summary",
+    failOnStatusCode: false // Prevent Cypress from failing the test on 4xx/5xx
+  }).then((response) => {
+    cy.wrap(response).as("apiResponse");
+  });
+});

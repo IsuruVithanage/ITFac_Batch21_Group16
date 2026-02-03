@@ -30,3 +30,8 @@ Feature: User Plant API
     When the user retrieves the plant summary
     Then the response status code should be "200"
     And the response should contain valid summary data
+
+  @TC_USER_PLANT_05 @215104B
+  Scenario: Verify system rejects plant summary request without auth token
+    When the user attempts to retrieve the plant summary without an auth token
+    Then the response status code should be "401"

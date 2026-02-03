@@ -14,6 +14,22 @@ Feature: Admin Category Management
     When the admin submits the category form without entering a name
     Then a validation message should be displayed indicating category name is required
 
+  @TC_ADMIN_CAT_08 @215119B
+  Scenario: Verify validation message is shown for category name shorter than minimum length
+    Given the user is logged in as "admin"
+    And the "admin" is on the Add Category page
+    When the admin enters a category name shorter than the minimum length
+    And the admin submits the category form
+    Then a validation message should be displayed indicating minimum and maximum length requirement
+
+  @TC_ADMIN_CAT_09 @215119B
+  Scenario: Verify validation message is shown when category name exceeds maximum length
+    Given the user is logged in as "admin"
+    And the "admin" is on the Add Category page
+    When the admin enters a category name longer than the maximum allowed length
+    And the admin submits the category form
+    Then a validation message should be displayed indicating minimum and maximum length requirement
+
   @TC_ADMIN_CAT_15
   Scenario: Admin navigates to Add Category page
     Given the user is logged in as "admin"

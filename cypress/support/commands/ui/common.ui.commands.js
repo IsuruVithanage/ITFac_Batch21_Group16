@@ -41,3 +41,10 @@ Cypress.Commands.add("shouldShowValidationMessage", (messagePattern) => {
     cy.contains(messagePattern)
         .should("be.visible");
 });
+
+Cypress.Commands.add("clearAndType", (selector, value) => {
+    cy.get(selector)
+        .should("be.visible")
+        .clear()
+        .type(value);
+});

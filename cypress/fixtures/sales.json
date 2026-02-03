@@ -1,0 +1,14 @@
+{
+  "valid": {
+    "plantId": 1,
+    "quantity": 2
+  },
+  "invalidPlant": {
+    "plantId": 9999,
+    "quantity": 1
+  },
+  "exceedStock": {
+    "plantId": 1,
+    "quantity": 1000
+  }
+}

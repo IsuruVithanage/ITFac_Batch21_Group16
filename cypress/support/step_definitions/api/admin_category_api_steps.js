@@ -27,12 +27,6 @@ Then("the category should be created with name {string}", (categoryName) => {
   });
 });
 
-Then("the response status code should be {int} or {int}", (code1, code2) => {
-  cy.get("@apiResponse").then((response) => {
-    expect([code1, code2]).to.include(response.status);
-  });
-});
-
 Then("the response should indicate the category name already exists", () => {
   cy.get("@apiResponse").then((response) => {
     const bodyText = JSON.stringify(response.body).toLowerCase();

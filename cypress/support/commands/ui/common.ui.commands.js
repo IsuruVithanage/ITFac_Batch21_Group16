@@ -22,6 +22,12 @@ Cypress.Commands.add("clickOn", (text) => {
       .click();
 });
 
+Cypress.Commands.add("clearField", (selector) => {
+    cy.get(selector)
+        .should("be.visible")
+        .clear();
+});
+
 Cypress.Commands.add("goToPage", (path) => {
     cy.visit(path);
     cy.currentUrlShouldIncludes(path);
@@ -29,4 +35,9 @@ Cypress.Commands.add("goToPage", (path) => {
 
 Cypress.Commands.add("currentUrlShouldIncludes", (path) => {
     cy.url().should("include", path);
+});
+
+Cypress.Commands.add("shouldShowValidationMessage", (messagePattern) => {
+    cy.contains(messagePattern)
+        .should("be.visible");
 });

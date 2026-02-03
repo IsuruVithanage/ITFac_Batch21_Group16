@@ -4,14 +4,28 @@ Given("the {string} is on the category list page", (_role) => {
   cy.goToPage("/ui/categories");
 });
 
+Given("the {string} is on the Add Category page", (_role) => {
+  cy.goToPage("/ui/categories/add");
+});
+
+
 Then("the Delete button should be disabled for categories", () => {
   cy.get("button[title='Delete']")
       .should("exist")
       .and("be.disabled");
 });
 
+When("the admin submits the category form without entering a name", () => {
+  cy.clearField('input[name="name"]');
+  cy.clickOn("Save")
+});
+
 When("the admin clicks the Add Category button", () => {
   cy.contains("button, a", /add\s*(a\s*)?category/i).click();
+});
+
+Then("a validation message should be displayed indicating category name is required", () => {
+      cy.shouldShowValidationMessage(/category name.*required|required.*category name/i);
 });
 
 Then("the admin should be redirected to the Add Category page", () => {

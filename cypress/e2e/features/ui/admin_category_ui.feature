@@ -7,6 +7,13 @@ Feature: Admin Category Management
     And the "testUser" is on the category list page
     Then the Delete button should be disabled for categories
 
+  @TC_ADMIN_CAT_07 @215119B
+  Scenario: Verify validation message is shown when category name is empty
+    Given the user is logged in as "admin"
+    And the "admin" is on the Add Category page
+    When the admin submits the category form without entering a name
+    Then a validation message should be displayed indicating category name is required
+
   @TC_ADMIN_CAT_15
   Scenario: Admin navigates to Add Category page
     Given the user is logged in as "admin"

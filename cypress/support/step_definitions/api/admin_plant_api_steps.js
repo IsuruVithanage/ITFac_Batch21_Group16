@@ -72,3 +72,16 @@ When("the admin attempts to update a non-existent plant with ID {int}", (invalid
     });
   });
 });
+
+When("the user attempts to delete the plant", () => {
+  let userToken, plantId;
+
+  cy.get("@authToken").then((t) => { userToken = t; });
+  cy.get("@createdPlantId").then((id) => { plantId = id; });
+
+  cy.then(() => {
+    cy.deletePlant(plantId, userToken).then((response) => {
+      cy.wrap(response).as("apiResponse");
+    });
+  });
+});

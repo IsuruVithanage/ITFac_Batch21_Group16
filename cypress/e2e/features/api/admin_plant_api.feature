@@ -22,3 +22,10 @@ Feature: Admin Plant API
     When the admin attempts to update a non-existent plant with ID 999999
     Then the response status code should be "404"
     And the response should indicate "Plant not found"
+
+  @TC_ADMIN_PLANT_04 @215104B
+  Scenario: Verify user role cannot delete a plant
+    Given a plant exists
+    And the "testUser" is authenticated via API
+    When the user attempts to delete the plant
+    Then the response status code should be "403"

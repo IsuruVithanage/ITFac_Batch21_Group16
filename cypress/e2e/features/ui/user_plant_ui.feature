@@ -1,5 +1,5 @@
 @user @ui @plant
-Feature: User Plant List Access
+Feature: User Plant UI
 
   Background:
     Given the user is logged in as "testUser"

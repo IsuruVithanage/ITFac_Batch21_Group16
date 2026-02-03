@@ -6,6 +6,11 @@ Given("the {string} is authenticated via API", (role) => {
   });
 });
 
+Given("the user is logged out", () => {
+  // Clear the alias so subsequent steps
+  cy.wrap(null).as("authToken");
+});
+
 Then("the response status code should be {string}", (statusCodes) => {
   // Split by comma, space, or the word "or" (case insensitive)
   // Example: "200, 201 or 204" becomes [200, 201, 204]

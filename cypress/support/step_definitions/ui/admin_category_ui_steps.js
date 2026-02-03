@@ -1,4 +1,14 @@
-import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import {When, Then, Given} from "@badeball/cypress-cucumber-preprocessor";
+
+Given("the {string} is on the category list page", (_role) => {
+  cy.goToPage("/ui/categories");
+});
+
+Then("the Delete button should be disabled for categories", () => {
+  cy.get("button[title='Delete']")
+      .should("exist")
+      .and("be.disabled");
+});
 
 When("the admin clicks the Add Category button", () => {
   cy.contains("button, a", /add\s*(a\s*)?category/i).click();

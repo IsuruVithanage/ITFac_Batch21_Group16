@@ -12,10 +12,19 @@ Given("the user is authenticated", () => {
 When(
     "the user sends a request to get categories with page {int} and size {int}",
     (page, size) => {
-        cy.getCategoriesWithPagination(page, size, authToken)
-            .then((response) => {
-                apiResponse = response;
-            });
+        cy.get("@authToken").then((token) => {
+            cy.getCategoriesWithPagination(token, page, size).as("apiResponse");
+        });
+    }
+);
+
+When(
+    "the user searches categories with name {string} using pagination page {int} and size {int}",
+    (name, page, size) => {
+        cy.get("@authToken").then((token) => {
+            cy.searchCategoriesWithPagination(token, name, page, size)
+                .as("apiResponse");
+        });
     }
 );
 

@@ -1,5 +1,26 @@
 Feature: User Category API
 
+  @TC_USER_CAT_01 @215119B
+  Scenario: Verify user can retrieve category summary
+    Given the "testUser" is authenticated via API
+    When the user retrieves the category summary
+    Then the response status code should be "200"
+
+  @TC_USER_CAT_02 @215119B
+  Scenario: Verify user can retrieve categories using pagination
+    Given the "testUser" is authenticated via API
+    And at least one category exists
+    When the user sends a request to get categories with page 0 and size 10
+    Then the response status code should be "200"
+
+  @TC_USER_CAT_03 @215119B
+  Scenario: Verify user can search categories using sub-category name
+    Given the "testUser" is authenticated via API
+    And multiple categories exist
+    When the user searches categories with name "Roses" using pagination page 0 and size 10
+    Then the response status code should be "200"
+    And the response should contain categories matching name "Roses"
+
   @TC_USER_CAT_11
   Scenario: User retrieves category by valid ID
     Given a category named "Fruits" exists in the system

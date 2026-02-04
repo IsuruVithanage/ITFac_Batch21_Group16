@@ -1,6 +1,6 @@
 Cypress.Commands.add(
     "getCategoriesWithPagination",
-    (page, size, token) => {
+    (token, page, size) => {
         const pageNumber = Number(page);
         const pageSize = Number(size);
 
@@ -150,6 +150,36 @@ Cypress.Commands.add(
             },
             body: payload,
             failOnStatusCode: options.failOnStatusCode ?? false,
+        });
+    }
+);
+
+Cypress.Commands.add("getCategorySummary", (token) => {
+    return cy.request({
+        method: "GET",
+        url: "/api/categories/summary",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        failOnStatusCode: false,
+    });
+});
+
+Cypress.Commands.add(
+    "searchCategoriesWithPagination",
+    (token, name, page, size) => {
+        return cy.request({
+            method: "GET",
+            url: "/api/categories/page",
+            qs: {
+                name,
+                page,
+                size,
+            },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            failOnStatusCode: false,
         });
     }
 );

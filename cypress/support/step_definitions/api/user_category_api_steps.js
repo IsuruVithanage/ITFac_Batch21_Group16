@@ -136,6 +136,31 @@ When("the user retrieves all categories", () => {
   });
 });
 
+When("the user retrieves the category summary", () => {
+  cy.get("@authToken").then((token) => {
+    cy.getCategorySummary(token).as("apiResponse");
+  });
+});
+
+Then(
+    "the response should contain categories matching name {string}",
+    (searchName) => {
+      cy.get("@apiResponse").then((response) => {
+        expect(response.status).to.eq(200);
+
+        expect(response.body).to.have.property("content");
+        expect(response.body.content).to.be.an("array");
+
+        response.body.content.forEach((category) => {
+          expect(
+              category.name.toLowerCase(),
+              "Category name should match search term"
+          ).to.include(searchName.toLowerCase());
+        });
+      });
+    }
+);
+
 Then("the response should contain a list of categories with parentName", () => {
   cy.get("@apiResponse").then((response) => {
     expect(response.status).to.eq(200);

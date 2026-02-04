@@ -1,6 +1,6 @@
 Cypress.Commands.add(
     "getCategoriesWithPagination",
-    (page, size, token) => {
+    (token, page, size) => {
         const pageNumber = Number(page);
         const pageSize = Number(size);
 
@@ -127,3 +127,59 @@ Cypress.Commands.add("splitCategoriesByType", (categories) => {
         subCategories: categories.filter(cat => cat.parentId !== null),
     };
 });
+
+Cypress.Commands.add("deleteCategory", (categoryId, token, options = {}) => {
+    return cy.request({
+        method: "DELETE",
+        url: `/api/categories/${categoryId}`,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        failOnStatusCode: options.failOnStatusCode ?? false,
+    });
+});
+
+Cypress.Commands.add(
+    "updateCategory",
+    (categoryId, payload, token, options = {}) => {
+        return cy.request({
+            method: "PUT",
+            url: `/api/categories/${categoryId}`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: payload,
+            failOnStatusCode: options.failOnStatusCode ?? false,
+        });
+    }
+);
+
+Cypress.Commands.add("getCategorySummary", (token) => {
+    return cy.request({
+        method: "GET",
+        url: "/api/categories/summary",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        failOnStatusCode: false,
+    });
+});
+
+Cypress.Commands.add(
+    "searchCategoriesWithPagination",
+    (token, name, page, size) => {
+        return cy.request({
+            method: "GET",
+            url: "/api/categories/page",
+            qs: {
+                name,
+                page,
+                size,
+            },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            failOnStatusCode: false,
+        });
+    }
+);

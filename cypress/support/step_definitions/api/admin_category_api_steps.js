@@ -1,6 +1,7 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 let parentCategory = {};
+let apiResponse;
 
 Given('a category named {string} already exists', (categoryName) => {
   cy.get("@authToken").then((token) => {
@@ -11,10 +12,32 @@ Given('a category named {string} already exists', (categoryName) => {
   });
 });
 
+Given("multiple categories exist", () => {
+  cy.get("@authToken").then((token) => {
+    cy.getAllCategories(token).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body.length).to.be.greaterThan(1);
+      cy.wrap(response.body).as("categories");
+    });
+  });
+});
+
 When("the admin creates a category with name {string}", (categoryName) => {
   cy.get("@authToken").then((token) => {
     return cy.createCategory(categoryName, token).then((response) => {
       cy.wrap(response).as("apiResponse");
+    });
+  });
+});
+
+When("the admin updates a category using an existing category name", () => {
+  cy.get("@authToken").then((token) => {
+    cy.get("@categories").then((categories) => {
+      cy.updateCategoryName(
+          token,
+          categories[1].id,
+          categories[0].name
+      ).as("apiResponse");
     });
   });
 });
@@ -33,6 +56,32 @@ Then("the response should indicate the category name already exists", () => {
     expect(bodyText).to.match(/exist|duplicate|already/);
   });
 });
+
+When("the admin updates a category without a category name", () => {
+  cy.get("@authToken").then((token) => {
+    cy.get("@categories").then((categories) => {
+      cy.updateCategoryName(
+          token,
+          categories[0].id,
+          "" // EMPTY name
+      ).then((response) => {
+        cy.wrap(response).as("apiResponse");
+      });
+    });
+  });
+});
+
+Then("the response should indicate category name is required", () => {
+  cy.get("@apiResponse").then((response) => {
+    expect(response.body).to.exist;
+
+    // Flexible validation (safe for backend wording changes)
+    expect(
+        JSON.stringify(response.body).toLowerCase()
+    ).to.match(/name.*required|required.*name/);
+  });
+});
+
 
 Then("the response should indicate the category name is too short", () => {
   cy.get("@apiResponse").then((response) => {

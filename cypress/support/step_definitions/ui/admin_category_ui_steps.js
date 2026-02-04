@@ -10,9 +10,7 @@ Given("the {string} is on the Add Category page", (_role) => {
 
 
 Then("the Delete button should be disabled for categories", () => {
-  cy.get("button[title='Delete']")
-      .should("exist")
-      .and("be.disabled");
+    cy.assertActionButtonDisabled("Delete");
 });
 
 When("the admin submits the category form without entering a name", () => {

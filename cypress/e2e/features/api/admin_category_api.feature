@@ -33,6 +33,12 @@ Feature: Admin Category API
     When the test user attempts to delete a category
     Then the response status code should be "401 or 403"
 
+  @TC_ADMIN_CAT_05 @215119B
+  Scenario: Verify system behavior when deleting a non-existing category ID
+    Given the "admin" is authenticated via API
+    When the admin attempts to delete a non-existing category
+    Then the response status code should be "404 or 400"
+
   @TC_ADMIN_CAT_10
   Scenario: Admin creates a category with valid name length
     Given the "admin" is authenticated via API

@@ -183,3 +183,20 @@ Cypress.Commands.add(
         });
     }
 );
+
+Cypress.Commands.add(
+    "getSortedCategories",
+    (token, sortField, sortOrder) => {
+        return cy.request({
+            method: "GET",
+            url: "/api/categories/page",
+            qs: {
+                sort: `${sortField},${sortOrder}`,
+            },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            failOnStatusCode: false,
+        });
+    }
+);

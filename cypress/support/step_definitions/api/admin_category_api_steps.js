@@ -92,43 +92,48 @@ When("the admin updates the parent category of the sub-category", () => {
     cy.get("@categories").then((categories) => {
 
       const subCategory = categories.find(isSubCategory);
-      expect(subCategory).to.exist;
+      expect(subCategory, "Sub-category must exist").to.exist;
 
       const mainCategories = categories.filter(isMainCategory);
-      expect(mainCategories.length).to.be.greaterThan(0);
+      expect(
+          mainCategories.length,
+          "At least one main category must exist"
+      ).to.be.greaterThan(0);
 
       const newParent = mainCategories.find(
           (cat) => cat.name !== subCategory.parentName
       );
-      expect(newParent).to.exist;
+      expect(
+          newParent,
+          "A different main category must exist"
+      ).to.exist;
 
-      return cy.request({
-        method: "PUT",
-        url: `/api/categories/${subCategory.id}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: {
-          name: subCategory.name,
-          parentId: newParent.id,
-        },
-        failOnStatusCode: false,
-      });
+      cy.updateCategory(
+          subCategory.id,
+          {
+            name: subCategory.name,
+            parentId: newParent.id,
+          },
+          token
+      ).as("apiResponse");
     });
-  }).as("apiResponse");
+  });
 });
 
 
 When("the test user attempts to delete a category", () => {
   cy.get("@authToken").then((token) => {
-    cy.request({
-      method: "DELETE",
-      url: `/api/categories/${categoryIdToDelete}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      failOnStatusCode: false,
-    }).as("apiResponse"); // ✅ THIS IS THE FIX
+    cy.deleteCategory(categoryIdToDelete, token)
+        .as("apiResponse");
+  });
+});
+
+When("the admin attempts to delete a non-existing category", () => {
+  cy.get("@authToken").then((token) => {
+    const nonExistingCategoryId = 999999;
+
+    cy.deleteCategory(nonExistingCategoryId, token)
+        .as("apiResponse");
   });
 });
 

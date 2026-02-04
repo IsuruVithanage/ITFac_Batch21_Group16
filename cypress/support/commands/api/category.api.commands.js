@@ -127,3 +127,29 @@ Cypress.Commands.add("splitCategoriesByType", (categories) => {
         subCategories: categories.filter(cat => cat.parentId !== null),
     };
 });
+
+Cypress.Commands.add("deleteCategory", (categoryId, token, options = {}) => {
+    return cy.request({
+        method: "DELETE",
+        url: `/api/categories/${categoryId}`,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        failOnStatusCode: options.failOnStatusCode ?? false,
+    });
+});
+
+Cypress.Commands.add(
+    "updateCategory",
+    (categoryId, payload, token, options = {}) => {
+        return cy.request({
+            method: "PUT",
+            url: `/api/categories/${categoryId}`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: payload,
+            failOnStatusCode: options.failOnStatusCode ?? false,
+        });
+    }
+);

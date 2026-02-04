@@ -26,6 +26,13 @@ Feature: Admin Category API
     Then the response status code should be "200"
     And the sub-category should be updated with the new parent category
 
+  @TC_ADMIN_CAT_04 @215119B
+  Scenario: Verify normal user cannot delete a category
+    Given the "testUser" is authenticated via API
+    And at least one category exists
+    When the test user attempts to delete a category
+    Then the response status code should be "401 or 403"
+
   @TC_ADMIN_CAT_10
   Scenario: Admin creates a category with valid name length
     Given the "admin" is authenticated via API

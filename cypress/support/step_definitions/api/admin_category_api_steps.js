@@ -1,8 +1,9 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 let parentCategory = {};
-let apiResponse;
+let deleteResponse;
 let subCategory;
+let categoryIdToDelete;
 
 const isMainCategory = (cat) => {
   return (
@@ -51,6 +52,17 @@ Given("multiple categories exist", () => {
       expect(response.body.length).to.be.greaterThan(1);
 
       cy.wrap(response.body).as("categories");
+    });
+  });
+});
+
+Given("at least one category exists", () => {
+  cy.get("@authToken").then((token) => {
+    cy.getAllCategories(token).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body.length).to.be.greaterThan(0);
+
+      categoryIdToDelete = response.body[0].id;
     });
   });
 });
@@ -105,6 +117,21 @@ When("the admin updates the parent category of the sub-category", () => {
     });
   }).as("apiResponse");
 });
+
+
+When("the test user attempts to delete a category", () => {
+  cy.get("@authToken").then((token) => {
+    cy.request({
+      method: "DELETE",
+      url: `/api/categories/${categoryIdToDelete}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      failOnStatusCode: false,
+    }).as("apiResponse"); // ✅ THIS IS THE FIX
+  });
+});
+
 
 Then("the sub-category should be updated with the new parent category", () => {
   cy.get("@apiResponse").then((response) => {

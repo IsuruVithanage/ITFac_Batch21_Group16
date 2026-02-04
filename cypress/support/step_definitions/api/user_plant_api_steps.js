@@ -118,3 +118,98 @@ When("the user attempts to retrieve the plant summary without an auth token", ()
     cy.wrap(response).as("apiResponse");
   });
 });
+
+
+
+// Logic for Index 215004T
+Given("a valid plant and category exists", () => {
+  cy.get("@authToken").then((token) => {
+    cy.request({
+      method: "GET",
+      url: "/api/plants/paged",
+      headers: { Authorization: `Bearer ${token}` }
+    }).then((res) => {
+      const plant = res.body.content[0];
+      cy.wrap(plant.id).as("validPlantId");
+      cy.wrap(plant.category.id).as("validCategoryId");
+    });
+  });
+});
+
+
+// --- WHEN STEPS ---
+When("the user retrieves plants with page {int} and size {int}", (page, size) => {
+  cy.get("@authToken").then((token) => {
+    cy.request({
+      method: "GET",
+      url: "/api/plants/paged",
+      qs: { page, size },
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(res => cy.wrap(res).as("apiResponse"));
+  });
+});
+
+When("the user retrieves plant details using a valid plant ID", () => {
+  cy.get("@authToken").then((token) => {
+    cy.get("@validPlantId").then((id) => cy.getPlantById(id, token).as("apiResponse"));
+  });
+});
+
+When("the user retrieves plant details using an invalid plant ID {int}", (invalidId) => {
+  cy.get("@authToken").then((token) => cy.getPlantById(invalidId, token).as("apiResponse"));
+});
+
+When("the user retrieves plants using a valid category ID", () => {
+  cy.get("@authToken").then((token) => {
+    cy.get("@validCategoryId").then((id) => cy.getPlantsByCategory(id, token).as("apiResponse"));
+  });
+});
+
+When("the user retrieves plants using an invalid category ID {int}", (invalidId) => {
+  cy.get("@authToken").then((token) => cy.getPlantsByCategory(invalidId, token).as("apiResponse"));
+});
+
+When("the user searches for plants with name {string}", (name) => {
+  cy.get("@authToken").then((token) => cy.searchPlantsByName(name, token).as("apiResponse"));
+});
+
+// --- THEN STEPS ---
+
+
+
+Then("the response should contain correct plant details", () => {
+  cy.get("@apiResponse").then((res) => {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("name");
+  });
+});
+
+Then("the response should be an empty list", () => {
+  cy.get("@apiResponse").then((res) => {
+    if (res.status === 200) {
+        expect(res.body).to.be.an("array").and.have.length(0);
+    }
+  });
+});
+
+Then("the response list should contain the plant {string}", (name) => {
+  cy.get("@apiResponse").then((res) => {
+    const names = res.body.map(p => p.name);
+    expect(names).to.include(name);
+  });
+});
+
+Then("the response status code is {string} or {string}", (code1, code2) => {
+  cy.get("@apiResponse").then((res) => {
+    const status = res.status;
+    const expected1 = parseInt(code1);
+    const expected2 = parseInt(code2);
+    
+    // Pass if the status matches either of the two expected codes
+    expect([expected1, expected2]).to.include(
+      status, 
+      `Expected status to be either ${expected1} or ${expected2}, but got ${status}`
+    );
+  });
+});
+

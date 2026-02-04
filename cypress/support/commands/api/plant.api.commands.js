@@ -27,6 +27,34 @@ Cypress.Commands.add("deletePlant", (plantId, token) => {
   });
 });
 
+Cypress.Commands.add("getPlantsPaged", (page, size, token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/plants/paged",
+    qs: { page: page, size: size },
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
+Cypress.Commands.add("getAllPlants", (token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/plants", // The non-paged endpoint
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
+Cypress.Commands.add("getPlantSummary", (token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/plants/summary",
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
 Cypress.Commands.add("ensurePlantExistsWithName", (plantName) => {
   // Login as admin
   return cy.apiLoginAs("admin").then((token) => {
@@ -134,4 +162,36 @@ Cypress.Commands.add("getDifferentCategory", (token, currentCategoryId) => {
 
 Cypress.Commands.add("validateStatus", (expectedStatus) => {
   cy.get("@apiResponse").its("status").should("eq", parseInt(expectedStatus));
+});
+
+
+// cypress/support/commands/ui/plant.api.commands.js
+
+Cypress.Commands.add("getPlantById", (id, token) => {
+  return cy.request({
+    method: "GET",
+    url: `/api/plants/${id}`,
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
+Cypress.Commands.add("getPlantsByCategory", (categoryId, token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/plants",
+    qs: { categoryId: categoryId },
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
+Cypress.Commands.add("searchPlantsByName", (keyword, token) => {
+  return cy.request({
+    method: "GET",
+    url: "/api/plants/search",
+    qs: { name: keyword },
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
 });

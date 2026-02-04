@@ -4,6 +4,7 @@ Feature: User Plant API
   Background:
     Given the "testUser" is authenticated via API
 
+  # Friend's Scenarios (215104B)
   @TC_USER_PLANT_01 @215104B
   Scenario: Verify user can retrieve plants with pagination parameters
     Given at least 15 plants exist in the system
@@ -37,3 +38,36 @@ Feature: User Plant API
     Given the user is logged out
     When the user retrieves the plant summary
     Then the response status code should be "401"
+
+
+  @TC_USER_PLANT_11 @215004T
+  Scenario: Get plant by valid plant ID
+    Given a valid plant and category exists
+    When the user retrieves plant details using a valid plant ID
+    Then the response status code should be "200"
+    And the response should contain correct plant details
+
+  @TC_USER_PLANT_12 @215004T
+  Scenario: Get plant by invalid plant ID
+    When the user retrieves plant details using an invalid plant ID 999999
+    Then the response status code should be "404"
+
+  @TC_USER_PLANT_13 @215004T
+  Scenario: Get plants by valid category ID
+    Given a valid plant and category exists
+    When the user retrieves plants using a valid category ID
+    Then the response status code should be "200"
+    And the response should be a list of plants
+
+  @TC_USER_PLANT_14 @215004T
+  Scenario: Get plants by invalid category ID
+    When the user retrieves plants using an invalid category ID 999999
+    Then the response status code is "200" or "404"
+    And the response should be an empty list
+
+  @TC_USER_PLANT_15 @215004T
+  Scenario: Search plants by name
+    Given a plant named "Spider Plant" already exists
+    When the user searches for plants with name "Spider Plant"
+    Then the response status code should be "200"
+    And the response list should contain the plant "Spider Plant"

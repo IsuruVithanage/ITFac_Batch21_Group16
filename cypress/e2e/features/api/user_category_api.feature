@@ -1,4 +1,6 @@
+@user @api @category
 Feature: User Category API
+
 
   @TC_USER_CAT_01 @215119B
   Scenario: Verify user can retrieve category summary

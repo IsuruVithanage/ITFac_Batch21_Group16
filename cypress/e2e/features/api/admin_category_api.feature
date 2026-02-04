@@ -1,4 +1,21 @@
+@admin @api @category
 Feature: Admin Category API
+
+  @TC_ADMIN_CAT_01 @215119B
+  Scenario: Verify admin cannot update category using duplicate category name
+    Given the "admin" is authenticated via API
+    And multiple categories exist
+    When the admin updates a category using an existing category name
+    Then the response status code should be "400"
+    And the response should indicate the category name already exists
+
+  @TC_ADMIN_CAT_02 @215119B
+  Scenario: Verify admin cannot update category without category name
+    Given the "admin" is authenticated via API
+    And multiple categories exist
+    When the admin updates a category without a category name
+    Then the response status code should be "400"
+    And the response should indicate category name is required
 
   @TC_ADMIN_CAT_10
   Scenario: Admin creates a category with valid name length

@@ -17,6 +17,15 @@ Feature: Admin Category API
     Then the response status code should be "400"
     And the response should indicate category name is required
 
+  @TC_ADMIN_CAT_03 @215119B
+  Scenario: Verify admin can update the parent category of an existing sub-category
+    Given the "admin" is authenticated via API
+    And multiple categories exist
+    And at least one sub-category exists
+    When the admin updates the parent category of the sub-category
+    Then the response status code should be "200"
+    And the sub-category should be updated with the new parent category
+
   @TC_ADMIN_CAT_10
   Scenario: Admin creates a category with valid name length
     Given the "admin" is authenticated via API

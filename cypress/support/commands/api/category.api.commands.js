@@ -120,3 +120,10 @@ Cypress.Commands.add(
     }
 );
 
+
+Cypress.Commands.add("splitCategoriesByType", (categories) => {
+    return {
+        mainCategories: categories.filter(cat => cat.parentId === null),
+        subCategories: categories.filter(cat => cat.parentId !== null),
+    };
+});

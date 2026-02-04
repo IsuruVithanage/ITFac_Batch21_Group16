@@ -2,6 +2,25 @@ import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 let parentCategory = {};
 let apiResponse;
+let subCategory;
+
+const isMainCategory = (cat) => {
+  return (
+      cat.parentName === null ||
+      cat.parentName === "" ||
+      cat.parentName === "-" ||
+      cat.parentName === "string" ||
+      typeof cat.parentName === "undefined"
+  );
+};
+
+const isSubCategory = (cat) => {
+  return (
+      cat.parentName &&
+      cat.parentName !== "-" &&
+      cat.parentName !== "string"
+  );
+};
 
 Given('a category named {string} already exists', (categoryName) => {
   cy.get("@authToken").then((token) => {
@@ -12,11 +31,25 @@ Given('a category named {string} already exists', (categoryName) => {
   });
 });
 
+Given("at least one sub-category exists", () => {
+  cy.get("@categories").then((categories) => {
+    subCategory = categories.find(
+        (cat) => cat.parentName !== null
+    );
+
+    expect(
+        subCategory,
+        "At least one sub-category must exist"
+    ).to.exist;
+  });
+});
+
 Given("multiple categories exist", () => {
   cy.get("@authToken").then((token) => {
     cy.getAllCategories(token).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body.length).to.be.greaterThan(1);
+
       cy.wrap(response.body).as("categories");
     });
   });
@@ -41,6 +74,45 @@ When("the admin updates a category using an existing category name", () => {
     });
   });
 });
+
+When("the admin updates the parent category of the sub-category", () => {
+  cy.get("@authToken").then((token) => {
+    cy.get("@categories").then((categories) => {
+
+      const subCategory = categories.find(isSubCategory);
+      expect(subCategory).to.exist;
+
+      const mainCategories = categories.filter(isMainCategory);
+      expect(mainCategories.length).to.be.greaterThan(0);
+
+      const newParent = mainCategories.find(
+          (cat) => cat.name !== subCategory.parentName
+      );
+      expect(newParent).to.exist;
+
+      return cy.request({
+        method: "PUT",
+        url: `/api/categories/${subCategory.id}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: {
+          name: subCategory.name,
+          parentId: newParent.id,
+        },
+        failOnStatusCode: false,
+      });
+    });
+  }).as("apiResponse");
+});
+
+Then("the sub-category should be updated with the new parent category", () => {
+  cy.get("@apiResponse").then((response) => {
+    expect(response.status).to.eq(200);
+    expect(response.body).to.have.property("id");
+  });
+});
+
 
 Then("the category should be created with name {string}", (categoryName) => {
   cy.get("@apiResponse").then((response) => {

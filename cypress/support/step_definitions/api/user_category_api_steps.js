@@ -142,6 +142,72 @@ When("the user retrieves the category summary", () => {
   });
 });
 
+When(
+    "the user searches categories with parent name {string} using pagination page {int} and size {int}",
+    (parentName, page, size) => {
+      cy.get("@authToken").then((token) => {
+        cy.searchCategoriesWithPagination(token, parentName, page, size)
+            .as("apiResponse");
+      });
+    }
+);
+
+When(
+    "the user retrieves categories sorted by {string} in {string} order",
+    (field, order) => {
+      cy.get("@authToken").then((token) => {
+        cy.getSortedCategories(token, field, order)
+            .as("apiResponse");
+      });
+    }
+);
+
+Then(
+    "the categories should be sorted by {string} in ascending order",
+    (field) => {
+      cy.get("@apiResponse").then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body).to.have.property("content");
+        expect(response.body.content).to.be.an("array");
+
+        const names = response.body.content.map(
+            (cat) => cat[field]?.toLowerCase()
+        );
+
+        const sortedNames = [...names].sort((a, b) =>
+            a.localeCompare(b)
+        );
+
+        expect(names).to.deep.equal(sortedNames);
+      });
+    }
+);
+
+Then(
+    "the response should contain categories related to parent name {string}",
+    (parentName) => {
+      cy.get("@apiResponse").then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body).to.have.property("content");
+        expect(response.body.content).to.be.an("array");
+
+        response.body.content.forEach((category) => {
+          const isParentCategory =
+              category.name.toLowerCase() === parentName.toLowerCase();
+
+          const isChildOfParent =
+              category.parentName &&
+              category.parentName.toLowerCase() === parentName.toLowerCase();
+
+          expect(
+              isParentCategory || isChildOfParent,
+              `Category ${category.name} should be related to parent ${parentName}`
+          ).to.be.true;
+        });
+      });
+    }
+);
+
 Then(
     "the response should contain categories matching name {string}",
     (searchName) => {

@@ -21,6 +21,22 @@ Feature: User Category API
     Then the response status code should be "200"
     And the response should contain categories matching name "Roses"
 
+  @TC_USER_CAT_04 @215119B
+  Scenario: Verify user can search categories using parent category name
+    Given the "testUser" is authenticated via API
+    And multiple categories exist
+    When the user searches categories with parent name "Flowers" using pagination page 0 and size 10
+    Then the response status code should be "200"
+    And the response should contain categories related to parent name "Flowers"
+
+  @TC_USER_CAT_05 @215119B
+  Scenario: Verify user can retrieve sorted category list
+    Given the "testUser" is authenticated via API
+    And multiple categories exist
+    When the user retrieves categories sorted by "name" in "asc" order
+    Then the response status code should be "200"
+    And the categories should be sorted by "name" in ascending order
+
   @TC_USER_CAT_11
   Scenario: User retrieves category by valid ID
     Given a category named "Fruits" exists in the system

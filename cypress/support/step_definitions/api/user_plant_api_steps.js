@@ -44,7 +44,7 @@ Given("at least {int} plants exist in the system", (minCount) => {
 
 When("the user retrieves plants with page {int} and size {int}", (page, size) => {
   cy.get("@authToken").then((token) => {
-    cy.getPlantsPaged(page, size, token).then((response) => {
+    cy.getPlantsPaged({token, page, size}).then((response) => {
       cy.wrap(response).as("apiResponse");
     });
   });
@@ -138,16 +138,6 @@ Given("a valid plant and category exists", () => {
 
 
 // --- WHEN STEPS ---
-When("the user retrieves plants with page {int} and size {int}", (page, size) => {
-  cy.get("@authToken").then((token) => {
-    cy.request({
-      method: "GET",
-      url: "/api/plants/paged",
-      qs: { page, size },
-      headers: { Authorization: `Bearer ${token}` }
-    }).then(res => cy.wrap(res).as("apiResponse"));
-  });
-});
 
 When("the user retrieves plant details using a valid plant ID", () => {
   cy.get("@authToken").then((token) => {
@@ -161,16 +151,16 @@ When("the user retrieves plant details using an invalid plant ID {int}", (invali
 
 When("the user retrieves plants using a valid category ID", () => {
   cy.get("@authToken").then((token) => {
-    cy.get("@validCategoryId").then((id) => cy.getPlantsByCategory(id, token).as("apiResponse"));
+    cy.get("@validCategoryId").then((categoryId) => cy.getPlantsPaged({token, categoryId}).as("apiResponse"));
   });
 });
 
-When("the user retrieves plants using an invalid category ID {int}", (invalidId) => {
-  cy.get("@authToken").then((token) => cy.getPlantsByCategory(invalidId, token).as("apiResponse"));
+When("the user retrieves plants using an invalid category ID {int}", (categoryId) => {
+  cy.get("@authToken").then((token) => cy.getPlantsPaged({token, categoryId}).as("apiResponse"));
 });
 
 When("the user searches for plants with name {string}", (name) => {
-  cy.get("@authToken").then((token) => cy.searchPlantsByName(name, token).as("apiResponse"));
+  cy.get("@authToken").then((token) => cy.getPlantsPaged({token, name}).as("apiResponse"));
 });
 
 // --- THEN STEPS ---
@@ -184,17 +174,28 @@ Then("the response should contain correct plant details", () => {
   });
 });
 
+Then("the response should contain a list of plants belonging to the category", () => {
+  cy.get("@apiResponse").then((response) => {
+    cy.get("@validCategoryId").then(expectedId => {
+      const plants = response.body.content;
+      expect(plants).to.be.an('array');
+      const allMatch = plants.every(plant => plant.category.id === expectedId);
+      expect(allMatch, "All plants should belong to the correct category").to.be.true;
+    });
+  });
+});
+
 Then("the response should be an empty list", () => {
   cy.get("@apiResponse").then((res) => {
     if (res.status === 200) {
-        expect(res.body).to.be.an("array").and.have.length(0);
+        expect(res.body.content).to.be.an("array").and.have.length(0);
     }
   });
 });
 
 Then("the response list should contain the plant {string}", (name) => {
   cy.get("@apiResponse").then((res) => {
-    const names = res.body.map(p => p.name);
+    const names = res.body.content.map(p => p.name);
     expect(names).to.include(name);
   });
 });
@@ -212,4 +213,3 @@ Then("the response status code is {string} or {string}", (code1, code2) => {
     );
   });
 });
-

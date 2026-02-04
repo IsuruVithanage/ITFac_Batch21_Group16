@@ -4,7 +4,6 @@ Feature: User Plant API
   Background:
     Given the "testUser" is authenticated via API
 
-  # Friend's Scenarios (215104B)
   @TC_USER_PLANT_01 @215104B
   Scenario: Verify user can retrieve plants with pagination parameters
     Given at least 15 plants exist in the system
@@ -57,7 +56,7 @@ Feature: User Plant API
     Given a valid plant and category exists
     When the user retrieves plants using a valid category ID
     Then the response status code should be "200"
-    And the response should be a list of plants
+    And the response should contain a list of plants belonging to the category
 
   @TC_USER_PLANT_14 @215004T
   Scenario: Get plants by invalid category ID

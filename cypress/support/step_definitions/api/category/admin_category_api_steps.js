@@ -67,6 +67,26 @@ Given("at least one category exists", () => {
   });
 });
 
+When(
+    "the user sends a request to get categories with page {int} and size {int}",
+    (page, size) => {
+      cy.get("@authToken").then((token) => {
+        cy.getCategoriesWithPagination(token, page, size).as("apiResponse");
+      });
+    }
+);
+
+When(
+    "the user searches categories with name {string} using pagination page {int} and size {int}",
+    (name, page, size) => {
+      cy.get("@authToken").then((token) => {
+        cy.searchCategoriesWithPagination(token, name, page, size)
+            .as("apiResponse");
+      });
+    }
+);
+
+
 When("the admin creates a category with name {string}", (categoryName) => {
   cy.get("@authToken").then((token) => {
     return cy.createCategory(categoryName, token).then((response) => {
@@ -306,4 +326,9 @@ Given("at least {int} categories exist in the system", (minCount) => {
       return chain;
     });
   });
+});
+
+
+Then("the response should contain a list of categories", () => {
+  expect(apiResponse.body.content).to.be.an("array");
 });

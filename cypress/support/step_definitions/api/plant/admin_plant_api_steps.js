@@ -106,7 +106,7 @@ When("the admin creates a new plant with valid fields", () => {
 
   cy.then(() => {
     cy.getAnyCategory(token).then((category) => {
-      const plantName = "Healthy Fern";
+      const plantName = "ValidPlantName";
 
       // 1. CLEANUP: Search for any existing plant with this name in this category
       cy.getPlantsPaged({token: token, name: plantName}).then((searchRes) => {

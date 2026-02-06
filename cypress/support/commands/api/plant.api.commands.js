@@ -107,25 +107,21 @@ Cypress.Commands.add("ensurePlantExistsWithName", (plantName) => {
   });
 });
 
-// Gets a valid category to use for plant creation
 Cypress.Commands.add("getAnyCategory", (token) => {
-  // We use the paged plants endpoint because it is more stable
-  return cy.getPlantsPaged({token: token}).then((res) => {
-    // If there are plants, take the category from the first one
-    if (res.body.content && res.body.content.length > 0) {
-      return res.body.content[0].category;
+  return cy.getAllSubCategories(token).then((res) => {
+    if (res.status === 200 && res.body.length > 0) {
+      return res.body[0]
     }
-    // Fallback: If no plants exist, use a hardcoded category object
-    // Adjust the ID based on what you know exists in your DB (usually 1 or 2)
-    return { id: 1, name: "General" }; 
+
+    throw new Error(
+      "Precondition Failed: No sub-category found. Cannot create plant."
+    );
   });
 });
 
 Cypress.Commands.add("getDifferentCategory", (token, currentCategoryId) => {
-  // First, try to get all sub-categories from the categories endpoint
   return cy.getAllSubCategories(token).then((res) => {
     if (res.status === 200 && res.body.length > 1) {
-      // Find the first category that isn't the one we are currently using
       const otherCat = res.body.find(cat => cat.id !== currentCategoryId);
       if (otherCat) return otherCat;
     }

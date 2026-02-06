@@ -53,12 +53,12 @@ Feature: Admin Plant API
 
   @TC_ADMIN_PLANT_14 @215004T
   Scenario: Duplicate plant name in same category
-    Given a plant named "UniquePlant" already exists
-    When the admin creates another plant with name "UniquePlant" in the same category
+    Given a plant named "UniquePlantName" already exists
+    When the admin creates another plant with name "UniquePlantName" in the same category
     Then the response status code should be "400"
 
   @TC_ADMIN_PLANT_15 @215004T
   Scenario: Duplicate plant name in different category
-    Given a plant named "GlobalPlant" already exists
-    When the admin creates a new plant with name "GlobalPlant" in a different category
+    Given a plant named "DuplicatedPlantName" already exists
+    When the admin creates a new plant with name "DuplicatedPlantName" in a different category
     Then the response status code should be "201"  

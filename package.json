@@ -6,6 +6,10 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "test": "cypress run",
+
+    "report:generate": "allure generate allure-results --clean -o allure-report",
+    "report:open": "allure open allure-report",
+
     "215119B": "cypress run --env tags=\"@215119B\" --spec \"cypress/e2e/features/**/*category*.feature,cypress/e2e/features/ui/sale/admin_sale_ui.feature\"",
     "215104B": "cypress run --env tags=\"@215104B\" --spec \"cypress/e2e/features/**/*plant*.feature\"",
     "215004T": "cypress run --env tags=\"@215004T\" --spec \"cypress/e2e/features/ui/admin_plant.feature,cypress/e2e/features/ui/user_plant.feature\"",
@@ -19,6 +23,8 @@
   "devDependencies": {
     "@badeball/cypress-cucumber-preprocessor": "^24.0.0",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
+    "allure-commandline": "^2.36.0",
+    "allure-cypress": "^3.4.5",
     "cypress": "^15.9.0",
     "esbuild": "^0.27.2"
   },

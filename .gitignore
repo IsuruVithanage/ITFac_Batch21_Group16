@@ -13,6 +13,8 @@ pnpm-debug.log*
 cypress/videos/
 cypress/screenshots/
 cypress/downloads/
+allure-results
+allure-report
 
 # =========================
 # Environment variables

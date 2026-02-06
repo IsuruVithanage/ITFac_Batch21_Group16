@@ -109,12 +109,7 @@ When("the admin creates a new plant with valid fields", () => {
       const plantName = "Healthy Fern";
 
       // 1. CLEANUP: Search for any existing plant with this name in this category
-      cy.request({
-        method: "GET",
-        url: "/api/plants/paged",
-        qs: { name: plantName },
-        headers: { Authorization: `Bearer ${token}` }
-      }).then((searchRes) => {
+      cy.getPlantsPaged({token: token, name: plantName}).then((searchRes) => {
         const existingPlant = searchRes.body.content.find(
           (p) => p.name === plantName && p.category.id === category.id
         );
@@ -179,12 +174,7 @@ When("the admin creates a new plant with name {string} in a different category",
     cy.getDifferentCategory(token, originalData.category.id).then((otherCategory) => {
       
       // 2. SEARCH: See if "GlobalPlant" already exists in this second category
-      cy.request({
-        method: "GET",
-        url: "/api/plants/paged",
-        qs: { name: plantName },
-        headers: { Authorization: `Bearer ${token}` }
-      }).then((searchRes) => {
+      cy.getPlantsPaged({token: token, name: plantName}).then((searchRes) => {
         // Find the specific plant that matches the name AND the new category ID
         const existingPlant = searchRes.body.content.find(
           (p) => p.name === plantName && p.category.id === otherCategory.id

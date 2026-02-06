@@ -27,11 +27,11 @@ Cypress.Commands.add("deletePlant", (plantId, token) => {
   });
 });
 
-Cypress.Commands.add("getPlantsPaged", (page, size, token) => {
+Cypress.Commands.add("getPlantsPaged", ({ token, page = 0, size = 10, name = null, categoryId = null }) => {
   return cy.request({
     method: "GET",
     url: "/api/plants/paged",
-    qs: { page: page, size: size },
+    qs: { page, size, name, categoryId },
     headers: { Authorization: `Bearer ${token}` },
     failOnStatusCode: false
   });
@@ -50,6 +50,15 @@ Cypress.Commands.add("getPlantSummary", (token) => {
   return cy.request({
     method: "GET",
     url: "/api/plants/summary",
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false
+  });
+});
+
+Cypress.Commands.add("getPlantById", (id, token) => {
+  return cy.request({
+    method: "GET",
+    url: `/api/plants/${id}`,
     headers: { Authorization: `Bearer ${token}` },
     failOnStatusCode: false
   });

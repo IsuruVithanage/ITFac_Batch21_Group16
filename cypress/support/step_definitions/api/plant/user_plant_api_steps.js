@@ -44,7 +44,7 @@ Given("at least {int} plants exist in the system", (minCount) => {
 
 When("the user retrieves plants with page {int} and size {int}", (page, size) => {
   cy.get("@authToken").then((token) => {
-    cy.getPlantsPaged(page, size, token).then((response) => {
+    cy.getPlantsPaged({token, page, size}).then((response) => {
       cy.wrap(response).as("apiResponse");
     });
   });
@@ -116,5 +116,100 @@ When("the user attempts to retrieve the plant summary without an auth token", ()
     failOnStatusCode: false // Prevent Cypress from failing the test on 4xx/5xx
   }).then((response) => {
     cy.wrap(response).as("apiResponse");
+  });
+});
+
+
+
+// Logic for Index 215004T
+Given("a valid plant and category exists", () => {
+  cy.get("@authToken").then((token) => {
+    cy.request({
+      method: "GET",
+      url: "/api/plants/paged",
+      headers: { Authorization: `Bearer ${token}` }
+    }).then((res) => {
+      const plant = res.body.content[0];
+      cy.wrap(plant.id).as("validPlantId");
+      cy.wrap(plant.category.id).as("validCategoryId");
+    });
+  });
+});
+
+
+// --- WHEN STEPS ---
+
+When("the user retrieves plant details using a valid plant ID", () => {
+  cy.get("@authToken").then((token) => {
+    cy.get("@validPlantId").then((id) => cy.getPlantById(id, token).as("apiResponse"));
+  });
+});
+
+When("the user retrieves plant details using an invalid plant ID {int}", (invalidId) => {
+  cy.get("@authToken").then((token) => cy.getPlantById(invalidId, token).as("apiResponse"));
+});
+
+When("the user retrieves plants using a valid category ID", () => {
+  cy.get("@authToken").then((token) => {
+    cy.get("@validCategoryId").then((categoryId) => cy.getPlantsPaged({token, categoryId}).as("apiResponse"));
+  });
+});
+
+When("the user retrieves plants using an invalid category ID {int}", (categoryId) => {
+  cy.get("@authToken").then((token) => cy.getPlantsPaged({token, categoryId}).as("apiResponse"));
+});
+
+When("the user searches for plants with name {string}", (name) => {
+  cy.get("@authToken").then((token) => cy.getPlantsPaged({token, name}).as("apiResponse"));
+});
+
+// --- THEN STEPS ---
+
+
+
+Then("the response should contain correct plant details", () => {
+  cy.get("@apiResponse").then((res) => {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("name");
+  });
+});
+
+Then("the response should contain a list of plants belonging to the category", () => {
+  cy.get("@apiResponse").then((response) => {
+    cy.get("@validCategoryId").then(expectedId => {
+      const plants = response.body.content;
+      expect(plants).to.be.an('array');
+      const allMatch = plants.every(plant => plant.category.id === expectedId);
+      expect(allMatch, "All plants should belong to the correct category").to.be.true;
+    });
+  });
+});
+
+Then("the response should be an empty list", () => {
+  cy.get("@apiResponse").then((res) => {
+    if (res.status === 200) {
+        expect(res.body.content).to.be.an("array").and.have.length(0);
+    }
+  });
+});
+
+Then("the response list should contain the plant {string}", (name) => {
+  cy.get("@apiResponse").then((res) => {
+    const names = res.body.content.map(p => p.name);
+    expect(names).to.include(name);
+  });
+});
+
+Then("the response status code is {string} or {string}", (code1, code2) => {
+  cy.get("@apiResponse").then((res) => {
+    const status = res.status;
+    const expected1 = parseInt(code1);
+    const expected2 = parseInt(code2);
+    
+    // Pass if the status matches either of the two expected codes
+    expect([expected1, expected2]).to.include(
+      status, 
+      `Expected status to be either ${expected1} or ${expected2}, but got ${status}`
+    );
   });
 });

@@ -1,9 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
-// Background Step
-Given("the user is logged into the application", () => {
-  cy.loginViaUI("testUser", "password123"); // Replace with your existing login command
-});
 
 // When Steps
 When("the user clicks on {string} in the navbar", (linkText) => {
@@ -14,7 +10,7 @@ When("the user clicks on {string} in the navbar", (linkText) => {
 // Then Steps - Page Loading
 Then("the Dashboard page should load", () => {
   cy.url().should("include", "/ui/dashboard");
-  cy.get("h1, h2").should("contain", "Dashboard"); // Adjust header selector as needed
+  cy.get("h3").should("contain", "Dashboard"); // Adjust header selector as needed
 });
 
 Then("the Categories page should load", () => {

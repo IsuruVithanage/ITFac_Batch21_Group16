@@ -12,7 +12,7 @@
 
     "215119B": "cypress run --env tags=\"@215119B\" --spec \"cypress/e2e/features/**/*category*.feature,cypress/e2e/features/ui/sale/admin_sale_ui.feature\"",
     "215104B": "cypress run --env tags=\"@215104B\" --spec \"cypress/e2e/features/**/*plant*.feature\"",
-    "215004T": "cypress run --env tags=\"@215004T\" --spec \"cypress/e2e/features/ui/user_nav_ui.feature\"",
+    "215004T": "cypress run --env tags=\"@215004T\" --spec \"cypress/e2e/features/**/*plant*.feature,cypress/e2e/features/ui/user_nav_ui.feature\"",
     "215054U": "cypress run --env tags=\"@215054U\" --spec \"cypress/e2e/features/ui/admin_plant.feature,cypress/e2e/features/ui/user_plant.feature\"",
     "215035M": "cypress run --env tags=\"@215035M\" --spec \"cypress/e2e/features/**/*category*.feature\""
   },

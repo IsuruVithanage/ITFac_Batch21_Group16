@@ -1,82 +1,70 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 let userToken;
+let adminToken;
 let apiResponse;
 let validSaleId;
+let salesData;
 
-Given('the user is authenticated as "testUser"', () => {
-  cy.apiLoginAs("testUser").then((token) => {
+/* ================= FIXTURES ================= */
+
+before(() => {
+  cy.fixture("sales").then((data) => {
+    salesData = data;
+  });
+});
+
+/* ================= AUTH (FIXED) ================= */
+
+Given("the user is authenticated as {string}", (role) => {
+  cy.apiLoginAs(role).then((token) => {
     userToken = token;
     expect(userToken).to.exist;
   });
 });
 
+/* ================= CREATE SALE (FORBIDDEN) ================= */
 
-
-When("the testuser creates a sale with valid data", () => {
-  currentSaleType = "valid";
-  createSale();
-});
-
-When("the testuser creates a sale with an invalid plant code", () => {
-  currentSaleType = "invalidPlant";
-  createSale();
-});
-
-When("the testuser creates a sale with quantity exceeding stock", () => {
-  currentSaleType = "exceedStock";
-  createSale();
-});
-
-//Sale creation helper
-
-function createSale() {
-  const sale = salesData[currentSaleType];
-
-  if (!sale) {
-    throw new Error(`No fixture data for sale type: ${currentSaleType}`);
-  }
+When("the user attempts to create a sale with valid data", () => {
+  const sale = salesData.valid;
 
   cy.request({
     method: "POST",
     url: `/api/sales/plant/${sale.plantId}`,
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      Authorization: `Bearer ${userToken}`,
     },
     qs: {
       quantity: sale.quantity,
     },
     failOnStatusCode: false,
-  }).then((response) => {
-    apiResponse = response;
-
-    if (response.status === 200 || response.status === 201) {
-      validSaleId = response.body.id;
-    }
+  }).then((res) => {
+    apiResponse = res;
   });
-}
+});
 
-When("the testuser deletes the sale", () => {
-  expect(validSaleId, "Valid sale ID should exist").to.exist;
+/* ================= DELETE SALE (FORBIDDEN) ================= */
 
+When("the user attempts to delete the sale", () => {
   cy.request({
     method: "DELETE",
     url: `/api/sales/${validSaleId}`,
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      Authorization: `Bearer ${userToken}`,
     },
-  }).then((response) => {
-    apiResponse = response;
+    failOnStatusCode: false,
+  }).then((res) => {
+    apiResponse = res;
   });
 });
 
-Then("the system should successfully delete the sale", () => {
-  expect(apiResponse.status).to.be.oneOf([200, 204]);
+/* ================= FORBIDDEN ASSERTION ================= */
+
+Then("the system should reject the request with forbidden error", () => {
+  expect(apiResponse.status).to.be.oneOf([401, 403]);
 });
 
-/* ======================================================
-   GET ALL SALES
-====================================================== */
+/* ================= GET ALL SALES ================= */
 
 When("the user sends a GET request to fetch sales data", () => {
   cy.request({
@@ -92,14 +80,38 @@ When("the user sends a GET request to fetch sales data", () => {
 
 Then("the system should return existing sales data successfully", () => {
   expect(apiResponse.status).to.eq(200);
-  expect(apiResponse.body).to.exist;
+  expect(apiResponse.body).to.be.an("array");
 });
 
-/* ======================================================
-   GET SALE BY ID
-====================================================== */
+Given("an admin has created a sale", () => {
+  cy.apiLoginAs("admin").then((token) => {
+    adminToken = token;
+    expect(adminToken).to.exist;
 
-When("the testuser fetches the sale by ID", () => {
+    cy.fixture("sales").then((salesData) => {
+      const sale = salesData.valid;
+
+      cy.request({
+        method: "POST",
+        url: `/api/sales/plant/${sale.plantId}`,
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
+        qs: {
+          quantity: sale.quantity,
+        },
+      }).then((res) => {
+        expect(res.status).to.be.oneOf([200, 201]);
+        validSaleId = res.body.id;
+        expect(validSaleId).to.exist;
+      });
+    });
+  });
+});
+
+/* ================= GET SALE BY ID ================= */
+
+When("the user fetches the sale by ID", () => {
   cy.request({
     method: "GET",
     url: `/api/sales/${validSaleId}`,
@@ -116,11 +128,9 @@ Then("the system should return the sale details successfully", () => {
   expect(apiResponse.body.id).to.eq(validSaleId);
 });
 
-/* ======================================================
-   PAGINATION & SORTING
-====================================================== */
+/* ================= PAGINATION & SORTING ================= */
 
-When("the testuser requests sales data with pagination and sorting", () => {
+When("the user requests sales data with pagination and sorting", () => {
   cy.request({
     method: "GET",
     url: "/api/sales/page",
@@ -139,5 +149,6 @@ When("the testuser requests sales data with pagination and sorting", () => {
 
 Then("the system should return paginated and sorted sales data", () => {
   expect(apiResponse.status).to.eq(200);
+  expect(apiResponse.body).to.have.property("content");
   expect(apiResponse.body.content).to.be.an("array");
 });

@@ -6,15 +6,11 @@ let apiResponse;
 let validSaleId;
 let salesData;
 
-/* ================= FIXTURES ================= */
-
 before(() => {
   cy.fixture("sales").then((data) => {
     salesData = data;
   });
 });
-
-/* ================= AUTH (FIXED) ================= */
 
 Given("the user is authenticated as {string}", (role) => {
   cy.apiLoginAs(role).then((token) => {
@@ -23,57 +19,24 @@ Given("the user is authenticated as {string}", (role) => {
   });
 });
 
-/* ================= CREATE SALE (FORBIDDEN) ================= */
-
 When("the user attempts to create a sale with valid data", () => {
-  const sale = salesData.valid;
-
-  cy.request({
-    method: "POST",
-    url: `/api/sales/plant/${sale.plantId}`,
-    headers: {
-      Authorization: `Bearer ${userToken}`,
-    },
-    qs: {
-      quantity: sale.quantity,
-    },
-    failOnStatusCode: false,
-  }).then((res) => {
+  cy.apiCreateSale(userToken, salesData.valid, false).then((res) => {
     apiResponse = res;
   });
 });
-
-/* ================= DELETE SALE (FORBIDDEN) ================= */
 
 When("the user attempts to delete the sale", () => {
-  cy.request({
-    method: "DELETE",
-    url: `/api/sales/${validSaleId}`,
-    headers: {
-      Authorization: `Bearer ${userToken}`,
-    },
-    failOnStatusCode: false,
-  }).then((res) => {
+  cy.apiDeleteSale(userToken, validSaleId, false).then((res) => {
     apiResponse = res;
   });
 });
-
-/* ================= FORBIDDEN ASSERTION ================= */
 
 Then("the system should reject the request with forbidden error", () => {
   expect(apiResponse.status).to.be.oneOf([401, 403]);
 });
 
-/* ================= GET ALL SALES ================= */
-
 When("the user sends a GET request to fetch sales data", () => {
-  cy.request({
-    method: "GET",
-    url: "/api/sales",
-    headers: {
-      Authorization: `Bearer ${userToken}`,
-    },
-  }).then((res) => {
+  cy.apiGetSales(userToken).then((res) => {
     apiResponse = res;
   });
 });
@@ -86,39 +49,15 @@ Then("the system should return existing sales data successfully", () => {
 Given("an admin has created a sale", () => {
   cy.apiLoginAs("admin").then((token) => {
     adminToken = token;
-    expect(adminToken).to.exist;
 
-    cy.fixture("sales").then((salesData) => {
-      const sale = salesData.valid;
-
-      cy.request({
-        method: "POST",
-        url: `/api/sales/plant/${sale.plantId}`,
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-        },
-        qs: {
-          quantity: sale.quantity,
-        },
-      }).then((res) => {
-        expect(res.status).to.be.oneOf([200, 201]);
-        validSaleId = res.body.id;
-        expect(validSaleId).to.exist;
-      });
+    cy.apiCreateSale(adminToken, salesData.valid).then((res) => {
+      validSaleId = res.body.id;
     });
   });
 });
 
-/* ================= GET SALE BY ID ================= */
-
 When("the user fetches the sale by ID", () => {
-  cy.request({
-    method: "GET",
-    url: `/api/sales/${validSaleId}`,
-    headers: {
-      Authorization: `Bearer ${userToken}`,
-    },
-  }).then((res) => {
+  cy.apiGetSaleById(userToken, validSaleId).then((res) => {
     apiResponse = res;
   });
 });
@@ -128,20 +67,11 @@ Then("the system should return the sale details successfully", () => {
   expect(apiResponse.body.id).to.eq(validSaleId);
 });
 
-/* ================= PAGINATION & SORTING ================= */
-
 When("the user requests sales data with pagination and sorting", () => {
-  cy.request({
-    method: "GET",
-    url: "/api/sales/page",
-    headers: {
-      Authorization: `Bearer ${userToken}`,
-    },
-    qs: {
-      page: 0,
-      size: 5,
-      sort: "id,desc",
-    },
+  cy.apiGetPaginatedSales(userToken, {
+    page: 0,
+    size: 5,
+    sort: "id,desc",
   }).then((res) => {
     apiResponse = res;
   });
@@ -149,6 +79,5 @@ When("the user requests sales data with pagination and sorting", () => {
 
 Then("the system should return paginated and sorted sales data", () => {
   expect(apiResponse.status).to.eq(200);
-  expect(apiResponse.body).to.have.property("content");
   expect(apiResponse.body.content).to.be.an("array");
 });

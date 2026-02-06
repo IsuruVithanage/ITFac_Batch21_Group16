@@ -87,10 +87,20 @@ When(
 );
 
 
-When("the admin creates a category with name {string}", (categoryName) => {
+When("the admin creates a category with duplicate name {string}", (categoryName) => {
   cy.get("@authToken").then((token) => {
     return cy.createCategory(categoryName, token).then((response) => {
       cy.wrap(response).as("apiResponse");
+    });
+  });
+});
+
+When("the admin creates a category with name {string}", (categoryName) => {
+  cy.get("@authToken").then((token) => {
+    cy.ensureCategoryDoesNotExist(categoryName, token).then(() => {
+      cy.createCategory(categoryName, token).then((response) => {
+        cy.wrap(response).as("apiResponse");
+      });
     });
   });
 });

@@ -55,8 +55,8 @@ Feature: User Category UI
     Scenario: Test user filters sub-categories by parent category
       Given the user is logged in as "testUser"
       And the user is on the category list page
-      When the user filters by parent category "Fruits"
-      Then only sub-categories for parent "Fruits" should be displayed
+      When the user filters by parent category "Outdoor"
+      Then only sub-categories for parent "Outdoor" should be displayed
 
     @TC_USER_CAT_19 @215035M
     Scenario: Test user sorts categories by name

@@ -29,6 +29,23 @@ Cypress.Commands.add("createCategory", (name, token) => {
 });
 
 Cypress.Commands.add(
+    "getCategoryByName",
+    (categoryName, token) => {
+        return cy.request({
+            method: "GET",
+            url: `/api/categories`,
+            qs: {
+                name: categoryName, // ?name=Mango
+            },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            failOnStatusCode: false, // defensive for negative tests
+        });
+    }
+);
+
+Cypress.Commands.add(
     "createSubCategory",
     (id, name, parentId, parentName, token) => {
         return cy.request({
@@ -59,6 +76,43 @@ Cypress.Commands.add("getCategoryById", (categoryId, token) => {
             Authorization: `Bearer ${token}`,
         },
         failOnStatusCode: false,
+    });
+});
+
+Cypress.Commands.add("deleteCategoryById", (categoryId, token) => {
+    return cy.request({
+        method: "DELETE",
+        url: `/api/categories/${categoryId}`,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        failOnStatusCode: false,
+    });
+});
+
+Cypress.Commands.add("ensureCategoryDoesNotExist", (categoryName, token) => {
+    return cy.getCategoryByName(categoryName, token).then((response) => {
+        if (response.status !== 200 || !Array.isArray(response.body)) {
+            return;
+        }
+
+        const matches = response.body.filter(
+            (cat) => cat.name === categoryName
+        );
+
+        if (matches.length === 0) {
+            return;
+        }
+
+        let chain = cy.wrap(null);
+
+        matches.forEach((cat) => {
+            chain = chain.then(() =>
+                cy.deleteCategoryById(cat.id, token)
+            );
+        });
+
+        return chain;
     });
 });
 

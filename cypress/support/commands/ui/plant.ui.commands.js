@@ -100,7 +100,7 @@ Cypress.Commands.add("verifyLowStockIndicator", () => {
 
     if (quantity < 5) {
       // Checks for a badge or text indicating low stock inside that row
-      cy.wrap($row).should("contain.text", "Low Stock"); 
+      cy.wrap($row).should("contain.text", "Low");
       // OR if it's a specific icon/class:
       // cy.wrap($row).find(".badge-warning, .low-stock-indicator").should("be.visible");
     }

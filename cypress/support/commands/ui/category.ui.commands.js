@@ -4,6 +4,7 @@ Cypress.Commands.add("goToCategoryList", () => {
   cy.url().should("include", "/categories");
 });
 
+
 // Search (uses your existing selectors)
 Cypress.Commands.add("searchCategoryByName", (term) => {
   cy.get('input[name="name"]').should("be.visible").clear().type(term);

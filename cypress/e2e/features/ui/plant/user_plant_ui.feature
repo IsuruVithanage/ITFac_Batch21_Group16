@@ -6,11 +6,15 @@ Feature: User Plant UI
     And the user is on the plant list page
 
   @TC_USER_PLANT_06 @215104B
-  Scenario: Search plants by plant name
-    Given a plant named "TestPlant_1" already exists
-    And a plant named "TestPlant_2" already exists
-    When the user searches for a plant with name "TestPlant_1"
-    Then only plants matching "TestPlant_1" should be displayed in the list
+  Scenario Outline: Verify user can search plants using plant name
+    Given a plant named "<PlantName1>" already exists
+    And a plant named "<PlantName2>" already exists
+    When the user searches for a plant with name "<PlantName1>"
+    Then only plants matching "<PlantName1>" should be displayed in the list
+    Examples:
+      | PlantName1     | PlantName2     |
+      | TestPlant_1    | TestPlant_2    |
+      | Test Plant 1   | Test Plant 2   |
 
   @TC_USER_PLANT_07 @215104B
   Scenario: Search plants by category

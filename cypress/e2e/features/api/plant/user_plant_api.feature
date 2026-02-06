@@ -66,7 +66,7 @@ Feature: User Plant API
 
   @TC_USER_PLANT_15 @215004T
   Scenario: Search plants by name
-    Given a plant named "Spider Plant" already exists
-    When the user searches for plants with name "Spider Plant"
+    Given a plant named "TestPlant_1" already exists
+    When the user searches for plants with name "TestPlant_1"
     Then the response status code should be "200"
-    And the response list should contain the plant "Spider Plant"
+    And the response list should contain the plant "TestPlant_1"

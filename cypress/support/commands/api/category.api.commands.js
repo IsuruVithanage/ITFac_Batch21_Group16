@@ -51,6 +51,26 @@ Cypress.Commands.add(
     }
 );
 
+Cypress.Commands.add("createSubCategoryV2", (name, parent, token) => {
+  return cy.request({
+    method: "POST",
+    url: "/api/categories",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: {
+      name,
+      parent: {
+        id: parent.id,
+        name: parent.name,
+        parentName: "-",
+      },
+    },
+    failOnStatusCode: false,
+  });
+});
+
+
 Cypress.Commands.add("getCategoryById", (categoryId, token) => {
     return cy.request({
         method: "GET",

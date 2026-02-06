@@ -7,3 +7,4 @@ import "./ui/plant.ui.commands";
 import "./api/common.api.commands";
 import "./api/category.api.commands";
 import "./api/plant.api.commands"
+import "./api/sale.api.commands";

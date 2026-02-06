@@ -1,6 +1,27 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 let parentCategory = {};
+let deleteResponse;
+let subCategory;
+let categoryIdToDelete;
+
+const isMainCategory = (cat) => {
+  return (
+      cat.parentName === null ||
+      cat.parentName === "" ||
+      cat.parentName === "-" ||
+      cat.parentName === "string" ||
+      typeof cat.parentName === "undefined"
+  );
+};
+
+const isSubCategory = (cat) => {
+  return (
+      cat.parentName &&
+      cat.parentName !== "-" &&
+      cat.parentName !== "string"
+  );
+};
 
 Given('a category named {string} already exists', (categoryName) => {
   cy.get("@authToken").then((token) => {
@@ -11,6 +32,61 @@ Given('a category named {string} already exists', (categoryName) => {
   });
 });
 
+Given("at least one sub-category exists", () => {
+  cy.get("@categories").then((categories) => {
+    subCategory = categories.find(
+        (cat) => cat.parentName !== null
+    );
+
+    expect(
+        subCategory,
+        "At least one sub-category must exist"
+    ).to.exist;
+  });
+});
+
+Given("multiple categories exist", () => {
+  cy.get("@authToken").then((token) => {
+    cy.getAllCategories(token).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body.length).to.be.greaterThan(1);
+
+      cy.wrap(response.body).as("categories");
+    });
+  });
+});
+
+Given("at least one category exists", () => {
+  cy.get("@authToken").then((token) => {
+    cy.getAllCategories(token).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body.length).to.be.greaterThan(0);
+
+      categoryIdToDelete = response.body[0].id;
+    });
+  });
+});
+
+When(
+    "the user sends a request to get categories with page {int} and size {int}",
+    (page, size) => {
+      cy.get("@authToken").then((token) => {
+        cy.getCategoriesWithPagination(token, page, size).as("apiResponse");
+      });
+    }
+);
+
+When(
+    "the user searches categories with name {string} using pagination page {int} and size {int}",
+    (name, page, size) => {
+      cy.get("@authToken").then((token) => {
+        cy.searchCategoriesWithPagination(token, name, page, size)
+            .as("apiResponse");
+      });
+    }
+);
+
+
 When("the admin creates a category with name {string}", (categoryName) => {
   cy.get("@authToken").then((token) => {
     return cy.createCategory(categoryName, token).then((response) => {
@@ -18,6 +94,77 @@ When("the admin creates a category with name {string}", (categoryName) => {
     });
   });
 });
+
+When("the admin updates a category using an existing category name", () => {
+  cy.get("@authToken").then((token) => {
+    cy.get("@categories").then((categories) => {
+      cy.updateCategoryName(
+          token,
+          categories[1].id,
+          categories[0].name
+      ).as("apiResponse");
+    });
+  });
+});
+
+When("the admin updates the parent category of the sub-category", () => {
+  cy.get("@authToken").then((token) => {
+    cy.get("@categories").then((categories) => {
+
+      const subCategory = categories.find(isSubCategory);
+      expect(subCategory, "Sub-category must exist").to.exist;
+
+      const mainCategories = categories.filter(isMainCategory);
+      expect(
+          mainCategories.length,
+          "At least one main category must exist"
+      ).to.be.greaterThan(0);
+
+      const newParent = mainCategories.find(
+          (cat) => cat.name !== subCategory.parentName
+      );
+      expect(
+          newParent,
+          "A different main category must exist"
+      ).to.exist;
+
+      cy.updateCategory(
+          subCategory.id,
+          {
+            name: subCategory.name,
+            parentId: newParent.id,
+          },
+          token
+      ).as("apiResponse");
+    });
+  });
+});
+
+
+When("the test user attempts to delete a category", () => {
+  cy.get("@authToken").then((token) => {
+    cy.deleteCategory(categoryIdToDelete, token)
+        .as("apiResponse");
+  });
+});
+
+When("the admin attempts to delete a non-existing category", () => {
+  cy.get("@authToken").then((token) => {
+    const nonExistingCategoryId = 999999;
+
+    cy.deleteCategory(nonExistingCategoryId, token)
+        .as("apiResponse");
+  });
+});
+
+
+Then("the sub-category should be updated with the new parent category", () => {
+  cy.get("@apiResponse").then((response) => {
+    expect(response.status).to.eq(200);
+    expect(response.body).to.have.property("id");
+  });
+});
+
 
 Then("the category should be created with name {string}", (categoryName) => {
   cy.get("@apiResponse").then((response) => {
@@ -33,6 +180,32 @@ Then("the response should indicate the category name already exists", () => {
     expect(bodyText).to.match(/exist|duplicate|already/);
   });
 });
+
+When("the admin updates a category without a category name", () => {
+  cy.get("@authToken").then((token) => {
+    cy.get("@categories").then((categories) => {
+      cy.updateCategoryName(
+          token,
+          categories[0].id,
+          "" // EMPTY name
+      ).then((response) => {
+        cy.wrap(response).as("apiResponse");
+      });
+    });
+  });
+});
+
+Then("the response should indicate category name is required", () => {
+  cy.get("@apiResponse").then((response) => {
+    expect(response.body).to.exist;
+
+    // Flexible validation (safe for backend wording changes)
+    expect(
+        JSON.stringify(response.body).toLowerCase()
+    ).to.match(/name.*required|required.*name/);
+  });
+});
+
 
 Then("the response should indicate the category name is too short", () => {
   cy.get("@apiResponse").then((response) => {
@@ -153,4 +326,9 @@ Given("at least {int} categories exist in the system", (minCount) => {
       return chain;
     });
   });
+});
+
+
+Then("the response should contain a list of categories", () => {
+  expect(apiResponse.body.content).to.be.an("array");
 });

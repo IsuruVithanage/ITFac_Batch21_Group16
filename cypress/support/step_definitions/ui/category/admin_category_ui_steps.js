@@ -10,9 +10,7 @@ Given("the {string} is on the Add Category page", (_role) => {
 
 
 Then("the Delete button should be disabled for categories", () => {
-  cy.get("button[title='Delete']")
-      .should("exist")
-      .and("be.disabled");
+    cy.assertActionButtonDisabled("Delete");
 });
 
 When("the admin submits the category form without entering a name", () => {
@@ -22,6 +20,24 @@ When("the admin submits the category form without entering a name", () => {
 
 When("the admin clicks the Add Category button", () => {
   cy.contains("button, a", /add\s*(a\s*)?category/i).click();
+});
+
+
+When("the admin submits the category form", () => {
+    cy.clickOn("Save")
+});
+
+When("the admin enters a category name shorter than the minimum length", () => {
+      cy.clearAndType('input[name="name"]', "ab");
+});
+
+When("the admin enters a category name longer than the maximum allowed length", () => {
+    cy.clearAndType('input[name="name"]', "abbdgtyhsweg");
+});
+
+
+Then("a validation message should be displayed indicating minimum and maximum length requirement", () => {
+      cy.shouldShowValidationMessage(/category name.*between\s*3\s*and\s*10\s*characters/i);
 });
 
 Then("a validation message should be displayed indicating category name is required", () => {

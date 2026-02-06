@@ -245,22 +245,52 @@ Then("the response should indicate the category name is too long", () => {
 });
 
 Given('a parent category named {string} exists', (parentName) => {
-  // fixed parent id = 1 as per your request body
-  parentCategory = { id: 1, name: parentName, parentName: "-" };
+  cy.get("@authToken").then((token) => {
+    cy.getAllCategories(token).then((res) => {
+      expect(res.status).to.eq(200);
+
+      // find a MAIN category with that name
+      const existingParent = res.body.find(
+        (c) => c.name === parentName && isMainCategory(c)
+      );
+
+      if (existingParent) {
+        parentCategory = {
+          id: existingParent.id,
+          name: existingParent.name,
+          parentName: "-",
+        };
+        return;
+      }
+
+      // create parent if not found
+      cy.createCategory(parentName, token).then((createRes) => {
+        expect(createRes.status).to.eq(201);
+
+        parentCategory = {
+          id: createRes.body.id,
+          name: createRes.body.name,
+          parentName: "-",
+        };
+      });
+    });
+  });
 });
+
 
 When(
   'the admin creates a sub-category with name {string} under that parent category',
   (subName) => {
     cy.get("@authToken").then((token) => {
       return cy
-        .createSubCategory(2, subName, parentCategory.id, parentCategory.name, token)
+        .createSubCategoryV2(subName, parentCategory, token)
         .then((response) => {
           cy.wrap(response).as("apiResponse");
         });
     });
   }
 );
+
 
 Then(
   "the sub-category should be created with name {string} linked to the parent",

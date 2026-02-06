@@ -6,7 +6,7 @@ const { allureCypress } = require("allure-cypress/reporter");
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: "http://localhost:8081",
+    baseUrl: "http://localhost:8080",
     specPattern: "cypress/e2e/**/*.feature",
     async setupNodeEvents(on, config) {
       await addCucumberPreprocessorPlugin(on, config);

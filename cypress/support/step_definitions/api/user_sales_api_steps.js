@@ -11,13 +11,7 @@ Given('the user is authenticated as "testUser"', () => {
   });
 });
 
-Given("a valid plant code exists with sufficient stock", () => {
-  currentSaleType = "valid";
-});
 
-Given("a valid plant code exists with limited stock", () => {
-  currentSaleType = "exceedStock";
-});
 
 When("the testuser creates a sale with valid data", () => {
   currentSaleType = "valid";

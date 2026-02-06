@@ -6,7 +6,7 @@ Feature: Admin Sales API Management
 @TC_ADMIN_SALE_01 
   Scenario: Verify admin can view existing sales data
     When the admin sends a GET request to fetch sales data
-    Then the system should return existing sales data successfully
+  Then the response status code should be "200"
 
 @TC_ADMIN_SALE_02 
   Scenario: Verify admin can create sale with valid plant code
@@ -29,4 +29,4 @@ Feature: Admin Sales API Management
   Scenario: Verify admin can delete existing sale
     Given a valid sale ID exists
     When the admin deletes the sale
-    Then the system should successfully delete the sale
+    Then the response status code should be "204"

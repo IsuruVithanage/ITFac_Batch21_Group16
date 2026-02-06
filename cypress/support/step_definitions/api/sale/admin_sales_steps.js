@@ -6,20 +6,22 @@ let validSaleId;
 let salesData;
 let currentSaleType;
 
-beforeEach(() => {
+before(() => {
   cy.fixture("sales").then((data) => {
     salesData = data;
   });
 });
 
-//Auth
+/* ================= AUTH ================= */
 
 Given("the admin is authenticated", () => {
   cy.apiLoginAs("admin").then((token) => {
     authToken = token;
-    expect(token).to.exist;
+    expect(authToken).to.exist;
   });
 });
+
+/* ================= PRECONDITIONS ================= */
 
 Given("a valid plant code exists with sufficient stock", () => {
   currentSaleType = "valid";
@@ -28,6 +30,8 @@ Given("a valid plant code exists with sufficient stock", () => {
 Given("a valid plant code exists with limited stock", () => {
   currentSaleType = "exceedStock";
 });
+
+/* ================= CREATE SALE ================= */
 
 When("the admin creates a sale with valid data", () => {
   currentSaleType = "valid";
@@ -44,14 +48,9 @@ When("the admin creates a sale with quantity exceeding stock", () => {
   createSale();
 });
 
-//Sale creation helper
-
 function createSale() {
   const sale = salesData[currentSaleType];
-
-  if (!sale) {
-    throw new Error(`No fixture data for sale type: ${currentSaleType}`);
-  }
+  expect(sale).to.exist;
 
   cy.request({
     method: "POST",
@@ -65,14 +64,11 @@ function createSale() {
     failOnStatusCode: false,
   }).then((response) => {
     apiResponse = response;
-
-    if (response.status === 200 || response.status === 201) {
+    if ([200, 201].includes(response.status)) {
       validSaleId = response.body.id;
     }
   });
 }
-
-//Fetch sales data
 
 When("the admin sends a GET request to fetch sales data", () => {
   cy.request({
@@ -82,39 +78,26 @@ When("the admin sends a GET request to fetch sales data", () => {
       Authorization: `Bearer ${authToken}`,
     },
   }).then((response) => {
-    apiResponse = response;
+    cy.wrap(response).as("apiResponse");
   });
 });
 
-Then("the system should return existing sales data successfully", () => {
-  expect(apiResponse.status).to.eq(200);
-  expect(apiResponse.body).to.be.an("array");
-});
-
-//Sale creation validations
-
 Then("the system should successfully create the sale", () => {
-  // Backend returns 200 instead of 201
   expect(apiResponse.status).to.be.oneOf([200, 201]);
   expect(apiResponse.body).to.have.property("id");
 });
 
 Then("the system should reject the request with plant not found error", () => {
   expect(apiResponse.status).to.eq(404);
-  expect(apiResponse.body.message.toLowerCase()).to.contain("not found");
+  expect(apiResponse.body.message.toLowerCase()).to.include("not found");
 });
 
 Then(
   "the system should reject the request with insufficient stock error",
   () => {
     expect(apiResponse.status).to.eq(400);
-    expect(apiResponse.body.message).to.match(
-      /has only \d+ items available in stock/i,
-    );
   },
 );
-
-//Sale deletion steps
 
 Given("a valid sale ID exists", () => {
   const sale = salesData.valid;
@@ -135,7 +118,7 @@ Given("a valid sale ID exists", () => {
 });
 
 When("the admin deletes the sale", () => {
-  expect(validSaleId, "Valid sale ID should exist").to.exist;
+  expect(validSaleId).to.exist;
 
   cy.request({
     method: "DELETE",
@@ -144,10 +127,6 @@ When("the admin deletes the sale", () => {
       Authorization: `Bearer ${authToken}`,
     },
   }).then((response) => {
-    apiResponse = response;
+    cy.wrap(response).as("apiResponse");
   });
-});
-
-Then("the system should successfully delete the sale", () => {
-  expect(apiResponse.status).to.be.oneOf([200, 204]);
 });

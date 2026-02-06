@@ -3,13 +3,8 @@ import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 Given("at least {int} plants exist in the system", (minCount) => {
   cy.apiLoginAs("admin").then((adminToken) => {
     // Check current count
-    cy.request({
-      method: "GET",
-      url: "/api/plants/paged",
-      qs: { page: 0, size: 1 },
-      headers: { Authorization: `Bearer ${adminToken}` },
-    }).then((response) => {
-      const totalPlants = response.body.totalElements;
+    cy.getPlantSummary(adminToken).then((response) => {
+      const totalPlants = response.body.totalPlants;
 
       if (totalPlants >= minCount) {
         return;

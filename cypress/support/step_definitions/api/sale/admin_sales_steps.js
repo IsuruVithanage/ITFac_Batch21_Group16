@@ -12,11 +12,10 @@ beforeEach(() => {
   });
 });
 
-
-//Auth 
+//Auth
 
 Given("the admin is authenticated", () => {
-  cy.apiLoginAs("testUser").then((token) => {
+  cy.apiLoginAs("admin").then((token) => {
     authToken = token;
     expect(token).to.exist;
   });

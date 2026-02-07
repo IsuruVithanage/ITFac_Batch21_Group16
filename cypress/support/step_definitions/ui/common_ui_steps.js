@@ -3,7 +3,7 @@ import DashboardPage from "../../pages/DashboardPage";
 import CategoryPage from "../../pages/CategoryPage";
 
 Given("the user is logged in as {string}", (role) => {
-  cy.loginAs(role); // Login logic remains as custom command
+  cy.loginAs(role); 
   DashboardPage.verifyPageLoaded();
 });
 

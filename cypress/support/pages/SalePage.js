@@ -4,7 +4,7 @@ class SalePage extends BasePage {
 
     // Locators
     get plantSelect() { return cy.get("select#plantId"); }
-    get quantityInput() { return cy.get('input[type="number"]'); } // Assuming based on step
+    get quantityInput() { return cy.get('input[type="number"]'); } 
     get sellButton() { return cy.contains("button", /^sell$/i); }
     get sellPlantLink() { return cy.contains("a", /sell plant/i); }
     get tableRows() { return cy.get("table tbody tr"); }

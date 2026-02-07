@@ -1,11 +1,8 @@
 import BasePage from "./BasePage";
 
 class NavigationPage extends BasePage {
-
-    // Locators
     get sidebar() { return cy.get(".sidebar.nav"); }
 
-    // Actions
     clickLink(linkText) {
         this.sidebar.contains("a", linkText).click();
     }

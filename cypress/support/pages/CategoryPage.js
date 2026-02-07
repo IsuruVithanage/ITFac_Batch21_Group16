@@ -10,7 +10,7 @@ class CategoryPage extends BasePage {
     get nameCells() { return cy.get("table tbody tr td:nth-child(2)"); }
     get nextButton() { return cy.contains("a,button", /next/i); }
     get sortHeader() { return cy.get('thead a[href*="sortField=name"]').first(); }
-    get saveButton() { return cy.contains("button", /save/i); } // approximation
+    get saveButton() { return cy.contains("button", /save/i); }
     get categoryTable() { return cy.get("table"); }
 
     verifyPageLoaded() {

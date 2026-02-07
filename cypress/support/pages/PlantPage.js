@@ -7,7 +7,7 @@ class PlantPage extends BasePage {
     get priceInput() { return cy.get('input[name="price"]'); }
     get quantityInput() { return cy.get('input[name="quantity"]'); }
     get categorySelect() { return cy.get('select[name="categoryId"]'); }
-    get saveButton() { return cy.contains("button", /save/i); } // Assuming standard naming
+    get saveButton() { return cy.contains("button", /save/i); } 
     get searchButton() { return cy.contains("button", /search/i); }
     get resetButton() { return cy.contains("button", /reset/i); }
     get sortHeader() { return cy.get('thead a[href*="sortField=name"]'); }
@@ -64,7 +64,7 @@ class PlantPage extends BasePage {
             const quantity = parseInt(qtyText, 10);
 
             if (quantity < 5) {
-                // Checks for a badge or text indicating low stock inside that row
+                
                 cy.wrap($row).should("contain.text", "Low");
             }
         });

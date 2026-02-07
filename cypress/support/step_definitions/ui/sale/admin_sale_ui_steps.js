@@ -33,11 +33,10 @@ Then("the page title should be {string}", (title) => {
 Then(
   "all Sell Plant form elements should be visible and properly labeled",
   () => {
-    // Navigate to Sell Plant form
+
     SalePage.clickSellPlantLink();
     SalePage.verifyAddSalePageLoaded();
-
-    // Assert form elements
+    
     SalePage.verifyFormElementsVisible();
   }
 );
@@ -112,7 +111,6 @@ Then("a delete confirmation dialog should appear", () => {
 });
 
 When("the admin confirms deletion", () => {
-  // handled by window:confirm
 });
 
 Then("the related sale record should be deleted successfully", () => {

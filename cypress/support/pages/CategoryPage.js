@@ -2,7 +2,7 @@ import BasePage from "./BasePage";
 
 class CategoryPage extends BasePage {
 
-    // Locators
+   
     get nameInput() { return cy.get('input[name="name"], #name'); }
     get parentSelect() { return cy.get('select[name="parentId"]'); }
     get searchButton() { return cy.contains('button[type="submit"]', /^search$/i); }

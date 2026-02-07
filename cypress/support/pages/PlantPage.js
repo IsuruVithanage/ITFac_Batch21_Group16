@@ -2,7 +2,6 @@ import BasePage from "./BasePage";
 
 class PlantPage extends BasePage {
 
-    // Locators
     get nameInput() { return cy.get('input[name="name"]'); }
     get priceInput() { return cy.get('input[name="price"]'); }
     get quantityInput() { return cy.get('input[name="quantity"]'); }

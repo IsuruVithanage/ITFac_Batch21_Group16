@@ -1,35 +1,38 @@
 import { When, Then, Given } from "@badeball/cypress-cucumber-preprocessor";
+import PlantPage from "../../../pages/PlantPage";
 
 Given("the {string} is on the plant list page", (_role) => {
-  cy.goToPage("/ui/plants");
+  cy.visit("/ui/plants");
+  PlantPage.verifyPageLoaded();
 });
 
 When("the {string} navigates to the plant list page", (_role) => {
-  cy.goToPage("/ui/plants");
+  cy.visit("/ui/plants");
+  PlantPage.verifyPageLoaded();
 });
 
 When("the admin clicks on the Add Plant button", () => {
-  cy.clickOn("Add a Plant")
+  PlantPage.clickAddPlantButton();
 });
 
 Then("the admin should be redirected to the Add Plant page", () => {
-  cy.currentUrlShouldIncludes("/ui/plants/add")
+  PlantPage.verifyRedirectToAddPage();
 });
 
 Then("the Add Plant button should not be visible", () => {
-  cy.contains("a", "Add a Plant").should("not.exist");
+  PlantPage.verifyAddButtonNotVisible();
 });
 
 When("the admin clicks on the edit button for the first plant in the list", () => {
-  cy.clickOnTheButtonOfFirstPlantItem("a[title='Edit']");
+  PlantPage.clickEditPlant(0);
 });
 
 Then("the admin should be redirected to the Edit Plant page", () => {
-  cy.currentUrlShouldIncludes("/ui/plants/edit");
+  PlantPage.verifyRedirectToEditPage();
 });
 
 Then("the Edit Plant button should not be visible", () => {
-  cy.get("a[title='Edit']").should("not.exist");
+  PlantPage.verifyEditButtonNotVisible();
 });
 
 When("the admin clicks on the delete button for the first plant in the list", () => {
@@ -39,7 +42,7 @@ When("the admin clicks on the delete button for the first plant in the list", ()
   });
 
   // 2. Click the delete button
-  cy.clickOnTheButtonOfFirstPlantItem("button[title='Delete']");
+  PlantPage.clickDeletePlant(0);
 });
 
 Then("a delete confirmation alert should be displayed", () => {
@@ -49,51 +52,51 @@ Then("a delete confirmation alert should be displayed", () => {
 
 // Reusing your friend's navigation logic
 Given("the admin is on the Add Plant page", () => {
-  cy.goToPage("/ui/plants/add");
+  PlantPage.goToAddPlantPage();
 });
 
 // TC_ADMIN_PLANT_16
 Then("the delete button should not be visible for any plant item", () => {
-  cy.verifyDeleteButtonNotVisible();
+  PlantPage.verifyDeleteButtonNotVisible();
 });
 
 // TC_ADMIN_PLANT_17
 Then("the low stock indicator should be displayed for plants with quantity less than 5", () => {
-  cy.verifyLowStockIndicator();
+  PlantPage.verifyLowStockIndicator();
 });
 
 // TC_ADMIN_PLANT_18
 When("the admin enters a negative value for price", () => {
   // Entering a generic negative price
-  cy.fillPlantPrice("-100");
+  PlantPage.fillPrice("-100");
 });
 
 Then("a validation error message for price should be displayed", () => {
   // Replace "Price cannot be negative" with the ACTUAL message your app shows
-  cy.verifyFieldValidationError("price", "Price must be greater than 0");
+  PlantPage.verifyFieldValidationError("price", "Price must be greater than 0");
 });
 
 // TC_ADMIN_PLANT_19
 When("the admin enters a negative value for quantity", () => {
-  cy.fillPlantQuantity("-5");
+  PlantPage.fillQuantity("-5");
 });
 
 Then("a validation error message for quantity should be displayed", () => {
   // Replace with actual error message from your app
-  cy.verifyFieldValidationError("quantity", "Quantity cannot be negative");
+  PlantPage.verifyFieldValidationError("quantity", "Quantity cannot be negative");
 });
 
 // TC_ADMIN_PLANT_20
 When("the admin leaves the category unselected", () => {
-  cy.deselectPlantCategory();
+  PlantPage.deselectCategory();
 });
 
 Then("a validation error message for category should be displayed", () => {
   // Replace with actual error message from your app
-  cy.verifyFieldValidationError("categoryId", "Category is required");
+  PlantPage.verifyFieldValidationError("categoryId", "Category is required");
 });
 
 // Generic step for submitting the form (used in 18, 19, 20)
 When("the admin submits the plant form", () => {
-  cy.submitPlantForm();
+  PlantPage.submitForm();
 });

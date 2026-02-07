@@ -1,47 +1,49 @@
-import {When, Then, Given} from "@badeball/cypress-cucumber-preprocessor";
+import { When, Then, Given } from "@badeball/cypress-cucumber-preprocessor";
+import CategoryPage from "../../../pages/CategoryPage";
 
 Given("the {string} is on the category list page", (_role) => {
-  cy.goToPage("/ui/categories");
+  cy.visit("/ui/categories");
+  CategoryPage.verifyPageLoaded();
 });
 
 Given("the {string} is on the Add Category page", (_role) => {
-  cy.goToPage("/ui/categories/add");
+  CategoryPage.goToAddCategoryPage();
 });
 
 
 Then("the Delete button should be disabled for categories", () => {
-    cy.assertActionButtonDisabled("Delete");
+  CategoryPage.assertActionButtonDisabled("Delete");
 });
 
 When("the admin submits the category form without entering a name", () => {
-  cy.clearField('input[name="name"]');
-  cy.clickOn("Save")
+  CategoryPage.clearNameInput();
+  CategoryPage.saveButton.click();
 });
 
 When("the admin clicks the Add Category button", () => {
-  cy.contains("button, a", /add\s*(a\s*)?category/i).click();
+  CategoryPage.clickAddCategoryButton();
 });
 
 
 When("the admin submits the category form", () => {
-    cy.clickOn("Save")
+  CategoryPage.saveButton.click();
 });
 
 When("the admin enters a category name shorter than the minimum length", () => {
-      cy.clearAndType('input[name="name"]', "ab");
+  CategoryPage.enterName("ab");
 });
 
 When("the admin enters a category name longer than the maximum allowed length", () => {
-    cy.clearAndType('input[name="name"]', "abbdgtyhsweg");
+  CategoryPage.enterName("abbdgtyhsweg");
 });
 
 
 Then("a validation message should be displayed indicating minimum and maximum length requirement", () => {
-      cy.shouldShowValidationMessage(/category name.*between\s*3\s*and\s*10\s*characters/i);
+  CategoryPage.verifyValidationMessage(/category name.*between\s*3\s*and\s*10\s*characters/i);
 });
 
 Then("a validation message should be displayed indicating category name is required", () => {
-      cy.shouldShowValidationMessage(/category name.*required|required.*category name/i);
+  CategoryPage.verifyValidationMessage(/category name.*required|required.*category name/i);
 });
 
 Then("the admin should be redirected to the Add Category page", () => {
@@ -50,18 +52,15 @@ Then("the admin should be redirected to the Add Category page", () => {
 });
 
 When("the admin clicks the Edit button for a category", () => {
-  cy.get('a[title="Edit"]').first().click();
+  CategoryPage.clickEditCategory(0);
 });
 
 Then("the admin should be redirected to the Edit Category page", () => {
-  cy.url().should("match", /edit/i);
+  CategoryPage.verifyRedirectToEditPage();
 });
 
 Then("the category details should be loaded", () => {
-  cy.get('input[name="name"], #name')
-    .should("be.visible")
-    .invoke("val")
-    .should("not.be.empty");
+  CategoryPage.verifyCategoryDetailsLoaded();
 });
 
 When("the admin clicks the Delete button for a category", () => {
@@ -70,7 +69,7 @@ When("the admin clicks the Delete button for a category", () => {
     return false;
   });
 
-  cy.get('button[title="Delete"]').first().click();
+  CategoryPage.clickDeleteCategory(0);
 });
 
 Then("a delete confirmation dialog should be displayed", () => {
@@ -78,11 +77,9 @@ Then("a delete confirmation dialog should be displayed", () => {
 });
 
 Then("the Add Category button should not be visible", () => {
-  cy.contains("button, a", /add\s*(a\s*)?category/i).should("not.exist");
-  cy.get('a[href*="/ui/categories/add"], a[href*="/categories/add"]').should("not.exist");
+  CategoryPage.verifyAddButtonNotVisible();
 });
 
 Then("the Edit buttons should not be visible", () => {
-  cy.get('a[title="Edit"]').should("not.exist");
-  cy.get('a[href*="/ui/categories/edit"]').should("not.exist");
+  CategoryPage.verifyEditButtonNotVisible();
 });

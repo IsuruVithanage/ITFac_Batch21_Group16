@@ -9,7 +9,7 @@ class PlantPage extends BasePage {
     get categorySelect() { return cy.get('select[name="categoryId"]'); }
     get saveButton() { return cy.contains("button", /save/i); } // Assuming standard naming
     get searchButton() { return cy.contains("button", /search/i); }
-    get resetButton() { return cy.contains("button", /reset/i); }
+    get resetButton() { return cy.contains("button, a", /reset/i); }
     get sortHeader() { return cy.get('thead a[href*="sortField=name"]'); }
     get tableRows() { return cy.get("table tbody tr"); }
     get nonEmptyTableRows() { return this.tableRows.not(":contains('No plants found')"); }
